@@ -1,0 +1,291 @@
+
+*** compare 9 and 13 ***
+0: equal
+1: equal
+2: equal
+3: equal
+4: different nums: 1 != 26
+5: different nums: 15 != -8
+6: equal
+7: equal
+8: equal
+9: equal
+10: equal
+11: equal
+12: equal
+13: equal
+14: equal
+15: different nums: 15 != 4
+16: equal
+17: equal
+
+
+inp w           w = in0
+mul x 0         x = 0
+add x z         x = 0
+mod x 26        x = 0
+*div z 1         z = 0
+*add x 15        x = 15
+eql x w         in0 == 15 ? x = 1 : x = 0   --> in0 <= 9 => x = 0
+eql x 0         in0 == 15 ? x = 0 : x = 1   --> in0 <= 9 => x = 1
+mul y 0         y = 0
+add y 25        y = 25
+mul y x         y = 25
+add y 1         y = 26
+mul z y         z = 0
+mul y 0         y = 0
+add y w         y = in0
+*add y 4         y = in0+4
+mul y x         y = in0+4
+add z y         z = in0+4
+
+=> z0 [5...13]
+inp w           w = in1
+mul x 0         x = 0
+add x z         x = z0
+mod x 26        x = z0
+div z 1         z = z0
+add x 14        x = z0 + 14
+eql x w         x = 0
+eql x 0         x = 1
+mul y 0         y = 0
+add y 25        y = 25
+mul y x         y = 25
+add y 1         y = 26
+mul z y         z = 26 * z0
+mul y 0         y = 0
+add y w         y = in1
+add y 16        y = in1 + 16
+mul y x         y = in1 + 16
+add z y         z = 26 * z0 + in1 + 16  
+
+=> z0 [147...363]
+inp w           w = in2
+mul x 0         x = 0
+add x z         x = z0
+mod x 26        x = z0 % 26
+div z 1		z = z0
+add x 11	x = z0 % 26 + 11
+eql x w		x = 0
+eql x 0		x = 1
+mul y 0		y = 0
+add y 25	y = 25
+mul y x		y = 25
+add y 1		y = 26
+mul z y		z = z0 * 26
+mul y 0		y = 0
+add y w		y = in2
+add y 14	y = in2 + 14
+mul y x		y = in2 + 14
+add z y		z = z0 * 26 + in2 + 14
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -13
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 3
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 14
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 11
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 15
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 13
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -7
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 11
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 10
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 7
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -12
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 12
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 15
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 15
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -16
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 13
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -9
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 1
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -8
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 15
+mul y x
+add z y
+
+inp w               w = in13
+mul x 0             x = 0
+add x z             x = z0
+mod x 26            x = z0 % 26
+div z 26            z = 0
+add x -8            x = (z0 % 26) - 8
+eql x w             in13 == (z0 % 26) - 8 ? x = 1 : x = 0
+eql x 0             in13 == (z0 % 26) - 8 ? x = 0 : x = 1
+mul y 0             y = 0
+add y 25            y = 25
+mul y x             in13 == (z0 % 26) - 8 ? y = 0 : y = 25
+add y 1             in13 == (z0 % 26) - 8 ? y = 1 : y = 26
+mul z y             z = 0
+mul y 0             y = 0
+add y w             y = in13
+add y 4             y = in13 + 4
+mul y x             in13 == (z0 % 26) - 8 ? y = 0 : y = in13 + 4
+add z y             in13 == (z0 % 26) - 8 ? z = 0 : y = in13 + 4
+`
+

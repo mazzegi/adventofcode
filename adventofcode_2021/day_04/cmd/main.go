@@ -1,0 +1,8 @@
+package main
+
+import "adventofcode_2021/day_04"
+
+func main() {
+	day_04.Part1()
+	day_04.Part2()
+}

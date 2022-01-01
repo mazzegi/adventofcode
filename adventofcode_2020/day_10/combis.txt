@@ -1,0 +1,7 @@
+01 => true
+02 => true
+03 => true
+01 02 => true
+01 03 => true
+02 03 => true
+01 02 03 => false

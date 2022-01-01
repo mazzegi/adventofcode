@@ -1,0 +1,300 @@
+
+ *** Part2 ***
+update rules
+
+ *** Part2 - Test "babbbbaabbbbbabbbbbbaabaaabaaa"
+check 0: [8 11] on "babbbbaabbbbbabbbbbbaabaaabaaa"
+  check 8: [42] | [42 8] on "babbbbaabbbbbabbbbbbaabaaabaaa"
+    check 42: [9 14] | [10 1] on "babbbbaabbbbbabbbbbbaabaaabaaa"
+      check 9: [14 27] | [1 26] on "babbbbaabbbbbabbbbbbaabaaabaaa"
+        check 27: [1 6] | [14 18] on "abbbbaabbbbbabbbbbbaabaaabaaa"
+          check 6: [14 14] | [1 14] on "bbbbaabbbbbabbbbbbaabaaabaaa"
+          end-check 6: [14 14] | [1 14] on "bbbbaabbbbbabbbbbbaabaaabaaa" => match "bb", rules [14 14]
+        end-check 27: [1 6] | [14 18] on "abbbbaabbbbbabbbbbbaabaaabaaa" => match "abb", rules [1 6]
+      end-check 9: [14 27] | [1 26] on "babbbbaabbbbbabbbbbbaabaaabaaa" => match "babb", rules [14 27]
+      check 10: [23 14] | [28 1] on "babbbbaabbbbbabbbbbbaabaaabaaa"
+        check 23: [25 1] | [22 14] on "babbbbaabbbbbabbbbbbaabaaabaaa"
+          check 25: [1 1] | [1 14] on "babbbbaabbbbbabbbbbbaabaaabaaa"
+          end-check 25: [1 1] | [1 14] on "babbbbaabbbbbabbbbbbaabaaabaaa" => NOT match
+          check 22: [14 14] on "babbbbaabbbbbabbbbbbaabaaabaaa"
+          end-check 22: [14 14] on "babbbbaabbbbbabbbbbbaabaaabaaa" => NOT match
+        end-check 23: [25 1] | [22 14] on "babbbbaabbbbbabbbbbbaabaaabaaa" => NOT match
+        check 28: [16 1] on "babbbbaabbbbbabbbbbbaabaaabaaa"
+          check 16: [15 1] | [14 14] on "babbbbaabbbbbabbbbbbaabaaabaaa"
+            check 15: [1] | [14] on "babbbbaabbbbbabbbbbbaabaaabaaa"
+            end-check 15: [1] | [14] on "babbbbaabbbbbabbbbbbaabaaabaaa" => match "b", rules [14]
+          end-check 16: [15 1] | [14 14] on "babbbbaabbbbbabbbbbbaabaaabaaa" => match "ba", rules [15 1]
+        end-check 28: [16 1] on "babbbbaabbbbbabbbbbbaabaaabaaa" => NOT match
+      end-check 10: [23 14] | [28 1] on "babbbbaabbbbbabbbbbbaabaaabaaa" => NOT match
+    end-check 42: [9 14] | [10 1] on "babbbbaabbbbbabbbbbbaabaaabaaa" => match "babbb", rules [9 14]
+    check 42: [9 14] | [10 1] on "babbbbaabbbbbabbbbbbaabaaabaaa"
+      check 9: [14 27] | [1 26] on "babbbbaabbbbbabbbbbbaabaaabaaa"
+        check 27: [1 6] | [14 18] on "abbbbaabbbbbabbbbbbaabaaabaaa"
+          check 6: [14 14] | [1 14] on "bbbbaabbbbbabbbbbbaabaaabaaa"
+          end-check 6: [14 14] | [1 14] on "bbbbaabbbbbabbbbbbaabaaabaaa" => match "bb", rules [14 14]
+        end-check 27: [1 6] | [14 18] on "abbbbaabbbbbabbbbbbaabaaabaaa" => match "abb", rules [1 6]
+      end-check 9: [14 27] | [1 26] on "babbbbaabbbbbabbbbbbaabaaabaaa" => match "babb", rules [14 27]
+      check 10: [23 14] | [28 1] on "babbbbaabbbbbabbbbbbaabaaabaaa"
+        check 23: [25 1] | [22 14] on "babbbbaabbbbbabbbbbbaabaaabaaa"
+          check 25: [1 1] | [1 14] on "babbbbaabbbbbabbbbbbaabaaabaaa"
+          end-check 25: [1 1] | [1 14] on "babbbbaabbbbbabbbbbbaabaaabaaa" => NOT match
+          check 22: [14 14] on "babbbbaabbbbbabbbbbbaabaaabaaa"
+          end-check 22: [14 14] on "babbbbaabbbbbabbbbbbaabaaabaaa" => NOT match
+        end-check 23: [25 1] | [22 14] on "babbbbaabbbbbabbbbbbaabaaabaaa" => NOT match
+        check 28: [16 1] on "babbbbaabbbbbabbbbbbaabaaabaaa"
+          check 16: [15 1] | [14 14] on "babbbbaabbbbbabbbbbbaabaaabaaa"
+            check 15: [1] | [14] on "babbbbaabbbbbabbbbbbaabaaabaaa"
+            end-check 15: [1] | [14] on "babbbbaabbbbbabbbbbbaabaaabaaa" => match "b", rules [14]
+          end-check 16: [15 1] | [14 14] on "babbbbaabbbbbabbbbbbaabaaabaaa" => match "ba", rules [15 1]
+        end-check 28: [16 1] on "babbbbaabbbbbabbbbbbaabaaabaaa" => NOT match
+      end-check 10: [23 14] | [28 1] on "babbbbaabbbbbabbbbbbaabaaabaaa" => NOT match
+    end-check 42: [9 14] | [10 1] on "babbbbaabbbbbabbbbbbaabaaabaaa" => match "babbb", rules [9 14]
+    check 8: [42] | [42 8] on "baabbbbbabbbbbbaabaaabaaa"
+      check 42: [9 14] | [10 1] on "baabbbbbabbbbbbaabaaabaaa"
+        check 9: [14 27] | [1 26] on "baabbbbbabbbbbbaabaaabaaa"
+          check 27: [1 6] | [14 18] on "aabbbbbabbbbbbaabaaabaaa"
+            check 6: [14 14] | [1 14] on "abbbbbabbbbbbaabaaabaaa"
+            end-check 6: [14 14] | [1 14] on "abbbbbabbbbbbaabaaabaaa" => match "ab", rules [1 14]
+          end-check 27: [1 6] | [14 18] on "aabbbbbabbbbbbaabaaabaaa" => match "aab", rules [1 6]
+        end-check 9: [14 27] | [1 26] on "baabbbbbabbbbbbaabaaabaaa" => match "baab", rules [14 27]
+        check 10: [23 14] | [28 1] on "baabbbbbabbbbbbaabaaabaaa"
+          check 23: [25 1] | [22 14] on "baabbbbbabbbbbbaabaaabaaa"
+            check 25: [1 1] | [1 14] on "baabbbbbabbbbbbaabaaabaaa"
+            end-check 25: [1 1] | [1 14] on "baabbbbbabbbbbbaabaaabaaa" => NOT match
+            check 22: [14 14] on "baabbbbbabbbbbbaabaaabaaa"
+            end-check 22: [14 14] on "baabbbbbabbbbbbaabaaabaaa" => NOT match
+          end-check 23: [25 1] | [22 14] on "baabbbbbabbbbbbaabaaabaaa" => NOT match
+          check 28: [16 1] on "baabbbbbabbbbbbaabaaabaaa"
+            check 16: [15 1] | [14 14] on "baabbbbbabbbbbbaabaaabaaa"
+              check 15: [1] | [14] on "baabbbbbabbbbbbaabaaabaaa"
+              end-check 15: [1] | [14] on "baabbbbbabbbbbbaabaaabaaa" => match "b", rules [14]
+            end-check 16: [15 1] | [14 14] on "baabbbbbabbbbbbaabaaabaaa" => match "ba", rules [15 1]
+          end-check 28: [16 1] on "baabbbbbabbbbbbaabaaabaaa" => match "baa", rules [16 1]
+        end-check 10: [23 14] | [28 1] on "baabbbbbabbbbbbaabaaabaaa" => NOT match
+      end-check 42: [9 14] | [10 1] on "baabbbbbabbbbbbaabaaabaaa" => match "baabb", rules [9 14]
+      check 42: [9 14] | [10 1] on "baabbbbbabbbbbbaabaaabaaa"
+        check 9: [14 27] | [1 26] on "baabbbbbabbbbbbaabaaabaaa"
+          check 27: [1 6] | [14 18] on "aabbbbbabbbbbbaabaaabaaa"
+            check 6: [14 14] | [1 14] on "abbbbbabbbbbbaabaaabaaa"
+            end-check 6: [14 14] | [1 14] on "abbbbbabbbbbbaabaaabaaa" => match "ab", rules [1 14]
+          end-check 27: [1 6] | [14 18] on "aabbbbbabbbbbbaabaaabaaa" => match "aab", rules [1 6]
+        end-check 9: [14 27] | [1 26] on "baabbbbbabbbbbbaabaaabaaa" => match "baab", rules [14 27]
+        check 10: [23 14] | [28 1] on "baabbbbbabbbbbbaabaaabaaa"
+          check 23: [25 1] | [22 14] on "baabbbbbabbbbbbaabaaabaaa"
+            check 25: [1 1] | [1 14] on "baabbbbbabbbbbbaabaaabaaa"
+            end-check 25: [1 1] | [1 14] on "baabbbbbabbbbbbaabaaabaaa" => NOT match
+            check 22: [14 14] on "baabbbbbabbbbbbaabaaabaaa"
+            end-check 22: [14 14] on "baabbbbbabbbbbbaabaaabaaa" => NOT match
+          end-check 23: [25 1] | [22 14] on "baabbbbbabbbbbbaabaaabaaa" => NOT match
+          check 28: [16 1] on "baabbbbbabbbbbbaabaaabaaa"
+            check 16: [15 1] | [14 14] on "baabbbbbabbbbbbaabaaabaaa"
+              check 15: [1] | [14] on "baabbbbbabbbbbbaabaaabaaa"
+              end-check 15: [1] | [14] on "baabbbbbabbbbbbaabaaabaaa" => match "b", rules [14]
+            end-check 16: [15 1] | [14 14] on "baabbbbbabbbbbbaabaaabaaa" => match "ba", rules [15 1]
+          end-check 28: [16 1] on "baabbbbbabbbbbbaabaaabaaa" => match "baa", rules [16 1]
+        end-check 10: [23 14] | [28 1] on "baabbbbbabbbbbbaabaaabaaa" => NOT match
+      end-check 42: [9 14] | [10 1] on "baabbbbbabbbbbbaabaaabaaa" => match "baabb", rules [9 14]
+      check 8: [42] | [42 8] on "bbbabbbbbbaabaaabaaa"
+        check 42: [9 14] | [10 1] on "bbbabbbbbbaabaaabaaa"
+          check 9: [14 27] | [1 26] on "bbbabbbbbbaabaaabaaa"
+            check 27: [1 6] | [14 18] on "bbabbbbbbaabaaabaaa"
+              check 18: [15 15] on "babbbbbbaabaaabaaa"
+                check 15: [1] | [14] on "babbbbbbaabaaabaaa"
+                end-check 15: [1] | [14] on "babbbbbbaabaaabaaa" => match "b", rules [14]
+                check 15: [1] | [14] on "abbbbbbaabaaabaaa"
+                end-check 15: [1] | [14] on "abbbbbbaabaaabaaa" => match "a", rules [1]
+              end-check 18: [15 15] on "babbbbbbaabaaabaaa" => match "ba", rules [15 15]
+            end-check 27: [1 6] | [14 18] on "bbabbbbbbaabaaabaaa" => match "bba", rules [14 18]
+          end-check 9: [14 27] | [1 26] on "bbbabbbbbbaabaaabaaa" => match "bbba", rules [14 27]
+          check 10: [23 14] | [28 1] on "bbbabbbbbbaabaaabaaa"
+            check 23: [25 1] | [22 14] on "bbbabbbbbbaabaaabaaa"
+              check 25: [1 1] | [1 14] on "bbbabbbbbbaabaaabaaa"
+              end-check 25: [1 1] | [1 14] on "bbbabbbbbbaabaaabaaa" => NOT match
+              check 22: [14 14] on "bbbabbbbbbaabaaabaaa"
+              end-check 22: [14 14] on "bbbabbbbbbaabaaabaaa" => match "bb", rules [14 14]
+            end-check 23: [25 1] | [22 14] on "bbbabbbbbbaabaaabaaa" => match "bbb", rules [22 14]
+            check 28: [16 1] on "bbbabbbbbbaabaaabaaa"
+              check 16: [15 1] | [14 14] on "bbbabbbbbbaabaaabaaa"
+                check 15: [1] | [14] on "bbbabbbbbbaabaaabaaa"
+                end-check 15: [1] | [14] on "bbbabbbbbbaabaaabaaa" => match "b", rules [14]
+              end-check 16: [15 1] | [14 14] on "bbbabbbbbbaabaaabaaa" => match "bb", rules [14 14]
+            end-check 28: [16 1] on "bbbabbbbbbaabaaabaaa" => NOT match
+          end-check 10: [23 14] | [28 1] on "bbbabbbbbbaabaaabaaa" => NOT match
+        end-check 42: [9 14] | [10 1] on "bbbabbbbbbaabaaabaaa" => match "bbbab", rules [9 14]
+        check 42: [9 14] | [10 1] on "bbbabbbbbbaabaaabaaa"
+          check 9: [14 27] | [1 26] on "bbbabbbbbbaabaaabaaa"
+            check 27: [1 6] | [14 18] on "bbabbbbbbaabaaabaaa"
+              check 18: [15 15] on "babbbbbbaabaaabaaa"
+                check 15: [1] | [14] on "babbbbbbaabaaabaaa"
+                end-check 15: [1] | [14] on "babbbbbbaabaaabaaa" => match "b", rules [14]
+                check 15: [1] | [14] on "abbbbbbaabaaabaaa"
+                end-check 15: [1] | [14] on "abbbbbbaabaaabaaa" => match "a", rules [1]
+              end-check 18: [15 15] on "babbbbbbaabaaabaaa" => match "ba", rules [15 15]
+            end-check 27: [1 6] | [14 18] on "bbabbbbbbaabaaabaaa" => match "bba", rules [14 18]
+          end-check 9: [14 27] | [1 26] on "bbbabbbbbbaabaaabaaa" => match "bbba", rules [14 27]
+          check 10: [23 14] | [28 1] on "bbbabbbbbbaabaaabaaa"
+            check 23: [25 1] | [22 14] on "bbbabbbbbbaabaaabaaa"
+              check 25: [1 1] | [1 14] on "bbbabbbbbbaabaaabaaa"
+              end-check 25: [1 1] | [1 14] on "bbbabbbbbbaabaaabaaa" => NOT match
+              check 22: [14 14] on "bbbabbbbbbaabaaabaaa"
+              end-check 22: [14 14] on "bbbabbbbbbaabaaabaaa" => match "bb", rules [14 14]
+            end-check 23: [25 1] | [22 14] on "bbbabbbbbbaabaaabaaa" => match "bbb", rules [22 14]
+            check 28: [16 1] on "bbbabbbbbbaabaaabaaa"
+              check 16: [15 1] | [14 14] on "bbbabbbbbbaabaaabaaa"
+                check 15: [1] | [14] on "bbbabbbbbbaabaaabaaa"
+                end-check 15: [1] | [14] on "bbbabbbbbbaabaaabaaa" => match "b", rules [14]
+              end-check 16: [15 1] | [14 14] on "bbbabbbbbbaabaaabaaa" => match "bb", rules [14 14]
+            end-check 28: [16 1] on "bbbabbbbbbaabaaabaaa" => NOT match
+          end-check 10: [23 14] | [28 1] on "bbbabbbbbbaabaaabaaa" => NOT match
+        end-check 42: [9 14] | [10 1] on "bbbabbbbbbaabaaabaaa" => match "bbbab", rules [9 14]
+        check 8: [42] | [42 8] on "bbbbbaabaaabaaa"
+          check 42: [9 14] | [10 1] on "bbbbbaabaaabaaa"
+            check 9: [14 27] | [1 26] on "bbbbbaabaaabaaa"
+              check 27: [1 6] | [14 18] on "bbbbaabaaabaaa"
+                check 18: [15 15] on "bbbaabaaabaaa"
+                  check 15: [1] | [14] on "bbbaabaaabaaa"
+                  end-check 15: [1] | [14] on "bbbaabaaabaaa" => match "b", rules [14]
+                  check 15: [1] | [14] on "bbaabaaabaaa"
+                  end-check 15: [1] | [14] on "bbaabaaabaaa" => match "b", rules [14]
+                end-check 18: [15 15] on "bbbaabaaabaaa" => match "bb", rules [15 15]
+              end-check 27: [1 6] | [14 18] on "bbbbaabaaabaaa" => match "bbb", rules [14 18]
+            end-check 9: [14 27] | [1 26] on "bbbbbaabaaabaaa" => match "bbbb", rules [14 27]
+            check 10: [23 14] | [28 1] on "bbbbbaabaaabaaa"
+              check 23: [25 1] | [22 14] on "bbbbbaabaaabaaa"
+                check 25: [1 1] | [1 14] on "bbbbbaabaaabaaa"
+                end-check 25: [1 1] | [1 14] on "bbbbbaabaaabaaa" => NOT match
+                check 22: [14 14] on "bbbbbaabaaabaaa"
+                end-check 22: [14 14] on "bbbbbaabaaabaaa" => match "bb", rules [14 14]
+              end-check 23: [25 1] | [22 14] on "bbbbbaabaaabaaa" => match "bbb", rules [22 14]
+              check 28: [16 1] on "bbbbbaabaaabaaa"
+                check 16: [15 1] | [14 14] on "bbbbbaabaaabaaa"
+                  check 15: [1] | [14] on "bbbbbaabaaabaaa"
+                  end-check 15: [1] | [14] on "bbbbbaabaaabaaa" => match "b", rules [14]
+                end-check 16: [15 1] | [14 14] on "bbbbbaabaaabaaa" => match "bb", rules [14 14]
+              end-check 28: [16 1] on "bbbbbaabaaabaaa" => NOT match
+            end-check 10: [23 14] | [28 1] on "bbbbbaabaaabaaa" => match "bbbb", rules [23 14]
+          end-check 42: [9 14] | [10 1] on "bbbbbaabaaabaaa" => match "bbbbb", rules [9 14]
+          check 42: [9 14] | [10 1] on "bbbbbaabaaabaaa"
+            check 9: [14 27] | [1 26] on "bbbbbaabaaabaaa"
+              check 27: [1 6] | [14 18] on "bbbbaabaaabaaa"
+                check 18: [15 15] on "bbbaabaaabaaa"
+                  check 15: [1] | [14] on "bbbaabaaabaaa"
+                  end-check 15: [1] | [14] on "bbbaabaaabaaa" => match "b", rules [14]
+                  check 15: [1] | [14] on "bbaabaaabaaa"
+                  end-check 15: [1] | [14] on "bbaabaaabaaa" => match "b", rules [14]
+                end-check 18: [15 15] on "bbbaabaaabaaa" => match "bb", rules [15 15]
+              end-check 27: [1 6] | [14 18] on "bbbbaabaaabaaa" => match "bbb", rules [14 18]
+            end-check 9: [14 27] | [1 26] on "bbbbbaabaaabaaa" => match "bbbb", rules [14 27]
+            check 10: [23 14] | [28 1] on "bbbbbaabaaabaaa"
+              check 23: [25 1] | [22 14] on "bbbbbaabaaabaaa"
+                check 25: [1 1] | [1 14] on "bbbbbaabaaabaaa"
+                end-check 25: [1 1] | [1 14] on "bbbbbaabaaabaaa" => NOT match
+                check 22: [14 14] on "bbbbbaabaaabaaa"
+                end-check 22: [14 14] on "bbbbbaabaaabaaa" => match "bb", rules [14 14]
+              end-check 23: [25 1] | [22 14] on "bbbbbaabaaabaaa" => match "bbb", rules [22 14]
+              check 28: [16 1] on "bbbbbaabaaabaaa"
+                check 16: [15 1] | [14 14] on "bbbbbaabaaabaaa"
+                  check 15: [1] | [14] on "bbbbbaabaaabaaa"
+                  end-check 15: [1] | [14] on "bbbbbaabaaabaaa" => match "b", rules [14]
+                end-check 16: [15 1] | [14 14] on "bbbbbaabaaabaaa" => match "bb", rules [14 14]
+              end-check 28: [16 1] on "bbbbbaabaaabaaa" => NOT match
+            end-check 10: [23 14] | [28 1] on "bbbbbaabaaabaaa" => match "bbbb", rules [23 14]
+          end-check 42: [9 14] | [10 1] on "bbbbbaabaaabaaa" => match "bbbbb", rules [9 14]
+          check 8: [42] | [42 8] on "aabaaabaaa"
+            check 42: [9 14] | [10 1] on "aabaaabaaa"
+              check 9: [14 27] | [1 26] on "aabaaabaaa"
+                check 26: [14 22] | [1 20] on "abaaabaaa"
+                  check 20: [14 14] | [1 15] on "baaabaaa"
+                  end-check 20: [14 14] | [1 15] on "baaabaaa" => NOT match
+                end-check 26: [14 22] | [1 20] on "abaaabaaa" => NOT match
+              end-check 9: [14 27] | [1 26] on "aabaaabaaa" => NOT match
+              check 10: [23 14] | [28 1] on "aabaaabaaa"
+                check 23: [25 1] | [22 14] on "aabaaabaaa"
+                  check 25: [1 1] | [1 14] on "aabaaabaaa"
+                  end-check 25: [1 1] | [1 14] on "aabaaabaaa" => match "aa", rules [1 1]
+                  check 22: [14 14] on "aabaaabaaa"
+                  end-check 22: [14 14] on "aabaaabaaa" => NOT match
+                end-check 23: [25 1] | [22 14] on "aabaaabaaa" => NOT match
+                check 28: [16 1] on "aabaaabaaa"
+                  check 16: [15 1] | [14 14] on "aabaaabaaa"
+                    check 15: [1] | [14] on "aabaaabaaa"
+                    end-check 15: [1] | [14] on "aabaaabaaa" => match "a", rules [1]
+                  end-check 16: [15 1] | [14 14] on "aabaaabaaa" => match "aa", rules [15 1]
+                end-check 28: [16 1] on "aabaaabaaa" => NOT match
+              end-check 10: [23 14] | [28 1] on "aabaaabaaa" => NOT match
+            end-check 42: [9 14] | [10 1] on "aabaaabaaa" => NOT match
+            check 42: [9 14] | [10 1] on "aabaaabaaa"
+              check 9: [14 27] | [1 26] on "aabaaabaaa"
+                check 26: [14 22] | [1 20] on "abaaabaaa"
+                  check 20: [14 14] | [1 15] on "baaabaaa"
+                  end-check 20: [14 14] | [1 15] on "baaabaaa" => NOT match
+                end-check 26: [14 22] | [1 20] on "abaaabaaa" => NOT match
+              end-check 9: [14 27] | [1 26] on "aabaaabaaa" => NOT match
+              check 10: [23 14] | [28 1] on "aabaaabaaa"
+                check 23: [25 1] | [22 14] on "aabaaabaaa"
+                  check 25: [1 1] | [1 14] on "aabaaabaaa"
+                  end-check 25: [1 1] | [1 14] on "aabaaabaaa" => match "aa", rules [1 1]
+                  check 22: [14 14] on "aabaaabaaa"
+                  end-check 22: [14 14] on "aabaaabaaa" => NOT match
+                end-check 23: [25 1] | [22 14] on "aabaaabaaa" => NOT match
+                check 28: [16 1] on "aabaaabaaa"
+                  check 16: [15 1] | [14 14] on "aabaaabaaa"
+                    check 15: [1] | [14] on "aabaaabaaa"
+                    end-check 15: [1] | [14] on "aabaaabaaa" => match "a", rules [1]
+                  end-check 16: [15 1] | [14 14] on "aabaaabaaa" => match "aa", rules [15 1]
+                end-check 28: [16 1] on "aabaaabaaa" => NOT match
+              end-check 10: [23 14] | [28 1] on "aabaaabaaa" => NOT match
+            end-check 42: [9 14] | [10 1] on "aabaaabaaa" => NOT match
+          end-check 8: [42] | [42 8] on "aabaaabaaa" => NOT match
+        end-check 8: [42] | [42 8] on "bbbbbaabaaabaaa" => match "bbbbb", rules [42]
+      end-check 8: [42] | [42 8] on "bbbabbbbbbaabaaabaaa" => match "bbbabbbbbb", rules [42 8]
+    end-check 8: [42] | [42 8] on "baabbbbbabbbbbbaabaaabaaa" => match "baabbbbbabbbbbb", rules [42 8]
+  end-check 8: [42] | [42 8] on "babbbbaabbbbbabbbbbbaabaaabaaa" => match "babbbbaabbbbbabbbbbb", rules [42 8]
+  check 11: [42 31] | [42 11 31] on "aabaaabaaa"
+    check 42: [9 14] | [10 1] on "aabaaabaaa"
+      check 9: [14 27] | [1 26] on "aabaaabaaa"
+        check 26: [14 22] | [1 20] on "abaaabaaa"
+          check 20: [14 14] | [1 15] on "baaabaaa"
+          end-check 20: [14 14] | [1 15] on "baaabaaa" => NOT match
+        end-check 26: [14 22] | [1 20] on "abaaabaaa" => NOT match
+      end-check 9: [14 27] | [1 26] on "aabaaabaaa" => NOT match
+      check 10: [23 14] | [28 1] on "aabaaabaaa"
+        check 23: [25 1] | [22 14] on "aabaaabaaa"
+          check 25: [1 1] | [1 14] on "aabaaabaaa"
+          end-check 25: [1 1] | [1 14] on "aabaaabaaa" => match "aa", rules [1 1]
+          check 22: [14 14] on "aabaaabaaa"
+          end-check 22: [14 14] on "aabaaabaaa" => NOT match
+        end-check 23: [25 1] | [22 14] on "aabaaabaaa" => NOT match
+        check 28: [16 1] on "aabaaabaaa"
+          check 16: [15 1] | [14 14] on "aabaaabaaa"
+            check 15: [1] | [14] on "aabaaabaaa"
+            end-check 15: [1] | [14] on "aabaaabaaa" => match "a", rules [1]
+          end-check 16: [15 1] | [14 14] on "aabaaabaaa" => match "aa", rules [15 1]
+        end-check 28: [16 1] on "aabaaabaaa" => NOT match
+      end-check 10: [23 14] | [28 1] on "aabaaabaaa" => NOT match
+    end-check 42: [9 14] | [10 1] on "aabaaabaaa" => NOT match
+    check 42: [9 14] | [10 1] on "aabaaabaaa"
+      check 9: [14 27] | [1 26] on "aabaaabaaa"
+        check 26: [14 22] | [1 20] on "abaaabaaa"
+          check 20: [14 14] | [1 15] on "baaabaaa"
+          end-check 20: [14 14] | [1 15] on "baaabaaa" => NOT match
+        end-check 26: [14 22] | [1 20] on "abaaabaaa" => NOT match
+      end-check 9: [14 27] | [1 26] on "aabaaabaaa" => NOT match
+      check 10: [23 14] | [28 1] on "aabaaabaaa"
+        check 23: [25 1] | [22 14] on "aabaaabaaa"
+          check 25: [1 1] | [1 14] on "aabaaabaaa"
+          end-check 25: [1 1] | [1 14] on "aabaaabaaa" => match "aa", rules [1 1]
+          check 22: [14 14] on "aabaaabaaa"
+          end-check 22: [14 14] on "aabaaabaaa" => NOT match
+        end-check 23: [25 1] | [22 14] on "aabaaabaaa" => NOT match
+        check 28: [16 1] on "aabaaabaaa"
+          check 16: [15 1] | [14 14] on "aabaaabaaa"
+            check 15: [1] | [14] on "aabaaabaaa"
+            end-check 15: [1] | [14] on "aabaaabaaa" => match "a", rules [1]
+          end-check 16: [15 1] | [14 14] on "aabaaabaaa" => match "aa", rules [15 1]
+        end-check 28: [16 1] on "aabaaabaaa" => NOT match
+      end-check 10: [23 14] | [28 1] on "aabaaabaaa" => NOT match
+    end-check 42: [9 14] | [10 1] on "aabaaabaaa" => NOT match
+  end-check 11: [42 31] | [42 11 31] on "aabaaabaaa" => NOT match
+end-check 0: [8 11] on "babbbbaabbbbbabbbbbbaabaaabaaa" => NOT match
+"babbbbaabbbbbabbbbbbaabaaabaaa" does NOT match
