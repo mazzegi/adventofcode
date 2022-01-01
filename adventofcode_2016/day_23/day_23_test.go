@@ -24,3 +24,8 @@ func TestRegAValue(t *testing.T) {
 		t.Fatalf("want %d, have %d", exp, n)
 	}
 }
+
+func TestCalc(t *testing.T) {
+	res := calc(12)
+	log("12 => %d", res)
+}
