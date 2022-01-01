@@ -4,7 +4,7 @@ import (
 	"adventofcode_2016/errutil"
 	"adventofcode_2016/readutil"
 	"fmt"
-	"sort"
+	"math"
 	"strconv"
 )
 
@@ -23,23 +23,29 @@ func fatalOnErr(err error) {
 	fatal("%v", err)
 }
 
+const skip1 = true
+
 func Part1() {
+	if skip1 {
+		return
+	}
 	res, err := fewestSteps(input)
 	errutil.ExitOnErr(err)
 	log("part1: result = %d", res)
 }
 
 func Part2() {
-	res, err := part2MainFunc(input)
+	res, err := fewestStepsWithReturn(input)
 	errutil.ExitOnErr(err)
 	log("part2: result = %d", res)
 }
 
 //
-func mustParseGrid(in string) *grid {
-	g := &grid{
+func mustParseGrid(in string) *dijkstraGrid {
+	g := &dijkstraGrid{
 		walls:   map[point]bool{},
 		numbers: map[point]int{},
+		nodes:   map[point]*node{},
 	}
 	lines := readutil.ReadLines(in)
 	for y, line := range lines {
@@ -47,18 +53,28 @@ func mustParseGrid(in string) *grid {
 			g.xsize = len(line)
 		}
 		for x, r := range line {
+			pt := point{x, y}
 			switch r {
 			case '.':
+				g.nodes[pt] = &node{
+					pt:        pt,
+					pathValue: math.MaxInt64,
+				}
 			case '#':
-				g.walls[point{x, y}] = true
+				g.walls[pt] = true
 			default:
 				n, err := strconv.ParseInt(string(r), 10, 8)
 				fatalOnErr(err)
-				g.numbers[point{x, y}] = int(n)
+				g.numbers[pt] = int(n)
+				g.nodes[pt] = &node{
+					pt:        pt,
+					pathValue: math.MaxInt64,
+				}
 			}
 		}
 	}
 	g.ysize = len(lines)
+	g.numNodes = len(g.nodes)
 
 	return g
 }
@@ -67,28 +83,36 @@ type point struct {
 	x, y int
 }
 
+type node struct {
+	pt        point
+	visited   bool
+	pathValue int
+	prev      *node
+}
+
 func (pt point) String() string {
 	return fmt.Sprintf("%d, %d", pt.x, pt.y)
 }
 
-func (pt point) hash() string {
-	return fmt.Sprintf("%d:%d", pt.x, pt.y)
-}
-
-func (pt point) less(opt point) bool {
-	if pt.x == opt.x {
-		return pt.y < opt.y
-	}
-	return pt.x < opt.x
-}
-
-type grid struct {
+type dijkstraGrid struct {
 	walls        map[point]bool
 	numbers      map[point]int
 	xsize, ysize int
+	nodes        map[point]*node
+	numNodes     int
+	numVisited   int
 }
 
-func (g *grid) adjacents(pt point) []point {
+func (g *dijkstraGrid) resetNodes() {
+	for _, n := range g.nodes {
+		n.visited = false
+		n.pathValue = math.MaxInt64
+		n.prev = nil
+	}
+	g.numVisited = 0
+}
+
+func (g *dijkstraGrid) adjacents(pt point) []point {
 	var adjs []point
 
 	addIfValid := func(apt point) {
@@ -109,7 +133,7 @@ func (g *grid) adjacents(pt point) []point {
 	return adjs
 }
 
-func (g *grid) findPositionOf(num int) (point, bool) {
+func (g *dijkstraGrid) findPositionOf(num int) (point, bool) {
 	for pt, pnum := range g.numbers {
 		if pnum == num {
 			return pt, true
@@ -118,7 +142,7 @@ func (g *grid) findPositionOf(num int) (point, bool) {
 	return point{}, false
 }
 
-func (g *grid) mustFindPositionOf(num int) point {
+func (g *dijkstraGrid) mustFindPositionOf(num int) point {
 	if pt, ok := g.findPositionOf(num); ok {
 		return pt
 	}
@@ -126,244 +150,240 @@ func (g *grid) mustFindPositionOf(num int) point {
 	return point{}
 }
 
-//
-type pointSet map[point]bool
-
-func (ps pointSet) contains(pt point) bool {
-	_, ok := ps[pt]
-	return ok
+func (g *dijkstraGrid) mustNode(pt point) *node {
+	n, ok := g.nodes[pt]
+	if !ok {
+		fatal("no node at %s", pt)
+	}
+	return n
 }
 
-func (ps pointSet) add(pt point) {
-	ps[pt] = true
+func (g *dijkstraGrid) visit(n *node) {
+	if n.visited {
+		return
+	}
+	n.visited = true
+	g.numVisited++
 }
 
-func (ps pointSet) clone() pointSet {
-	cps := pointSet{}
-	for pt := range ps {
-		cps.add(pt)
-	}
-	return cps
+func (g *dijkstraGrid) allVisited() bool {
+	return g.numVisited == g.numNodes
 }
 
-func (ps pointSet) hash() string {
-	pts := make([]point, len(ps))
-	i := 0
-	for pt := range ps {
-		pts[i] = pt
-		i++
+func (g *dijkstraGrid) maxNum() int {
+	max := 0
+	for _, num := range g.numbers {
+		if num > max {
+			max = num
+		}
 	}
-	sort.Slice(pts, func(i, j int) bool {
-		return pts[i].less(pts[j])
-	})
-	var s string
-	for _, pt := range pts {
-		s += pt.hash() + "|"
-	}
-	return s
+	return max
 }
 
 //
-type numberSet map[int]bool
-
-func (ns numberSet) contains(n int) bool {
-	_, ok := ns[n]
-	return ok
-}
-
-func (ns numberSet) add(n int) {
-	ns[n] = true
-}
-
-func (ns numberSet) clone() numberSet {
-	cns := numberSet{}
-	for n := range ns {
-		cns.add(n)
-	}
-	return cns
-}
-
-func (ns numberSet) remove(n int) {
-	delete(ns, n)
-}
-
-func (ns numberSet) empty() bool {
-	return len(ns) == 0
-}
-
-func (ns numberSet) hash() string {
-	nsl := make([]int, len(ns))
-	i := 0
-	for n := range ns {
-		nsl[i] = n
-		i++
-	}
-	sort.Ints(nsl)
-	var s string
-	for _, n := range nsl {
-		s += strconv.FormatInt(int64(n), 10)
-	}
-	return s
-}
-
-//
-
-// func fewestSteps(in string) (int, error) {
-// 	g := mustParseGrid(in)
-
-// 	numbersLeft := numberSet{}
-// 	for _, n := range g.numbers {
-// 		numbersLeft.add(n)
-// 	}
-// 	numbersLeft.remove(0)
-// 	pt0 := g.mustFindPositionOf(0)
-// 	visited := pointSet{pt0: true}
-
-// 	cache := map[string]cacheResult{}
-// 	steps, ok := walk(cache, g, visited, numbersLeft, pt0)
-// 	if !ok {
-// 		fatal("didn't find way")
-// 	}
-
-// 	return steps, nil
-// }
 
 func fewestSteps(in string) (int, error) {
 	g := mustParseGrid(in)
 
-	steps := fewestStepsBetween(g, 0, 5)
+	min := 1
+	max := g.maxNum()
 
-	return steps, nil
+	//search all permutations of [1...max]
+	test := make([]int, max)
+	for i := 0; i < len(test); i++ {
+		test[i] = min
+	}
+
+	containsDupl := func(ns []int) bool {
+		m := map[int]bool{}
+		for _, n := range ns {
+			if _, ok := m[n]; ok {
+				return true
+			}
+			m[n] = true
+		}
+		return false
+	}
+
+	next := func() bool {
+		for i := 0; i < len(test); i++ {
+			if test[i] < max {
+				test[i]++
+				return true
+			} else {
+				test[i] = min
+			}
+		}
+		return false
+	}
+
+	type pair struct {
+		a, b int
+	}
+	cache := map[pair]int{}
+
+	minSteps := 0
+	for {
+		ok := next()
+		if !ok {
+			break
+		}
+		if containsDupl(test) {
+			continue
+		}
+		currSteps := 0
+		prevNum := 0
+		for _, num := range test {
+			var subSteps int
+			if s, ok := cache[pair{prevNum, num}]; ok {
+				subSteps = s
+			} else {
+				subSteps = fewestStepsBetween(g, prevNum, num)
+				cache[pair{prevNum, num}] = subSteps
+			}
+
+			currSteps += subSteps
+			prevNum = num
+		}
+		if minSteps == 0 || currSteps < minSteps {
+			minSteps = currSteps
+		}
+		log("%v => %d", test, currSteps)
+	}
+
+	return minSteps, nil
 }
 
-func fewestStepsBetween(g *grid, num1, num2 int) int {
+func fewestStepsBetween(g *dijkstraGrid, num1, num2 int) int {
+	g.resetNodes()
 	curr := g.mustFindPositionOf(num1)
 	dest := g.mustFindPositionOf(num2)
 
-	cache := map[string]cacheResult{}
-	visited := pointSet{curr: true}
-	steps, ok := walkShortestTo(0, cache, g, visited, curr, dest)
-	if !ok {
-		fatal("walk from %s to %s", curr, dest)
+	notVisitedNodeWithMinDist := func() *node {
+		var cand *node
+		var candDist int
+		for _, n := range g.nodes {
+			if n.visited {
+				continue
+			}
+			if cand == nil {
+				cand = n
+				candDist = n.pathValue
+				continue
+			}
+			if n.pathValue < candDist {
+				cand = n
+				candDist = n.pathValue
+			}
+		}
+		return cand
+	}
+
+	steps := 0
+	start := g.mustNode(curr)
+	start.pathValue = 0
+	for !g.allVisited() {
+		n := notVisitedNodeWithMinDist()
+		g.visit(n)
+
+		adjs := g.adjacents(n.pt)
+		for _, adj := range adjs {
+			if adj == dest {
+				return n.pathValue + 1
+			}
+
+			an := g.mustNode(adj)
+			if an.visited {
+				continue
+			}
+			test := n.pathValue + 1
+			if test < an.pathValue {
+				an.pathValue = test
+				an.prev = n
+			}
+		}
 	}
 
 	return steps
 }
 
-func walkShortestTo(level int, cache map[string]cacheResult, g *grid, visited pointSet, curr point, dest point) (int, bool) {
-	minSteps := 0
-	log("%d: try %s (visit = %d)", level, curr, len(visited))
-	found := false
-	adjs := g.adjacents(curr)
-	for _, adj := range adjs {
-		if visited.contains(adj) {
-			continue
-		}
-		if adj == dest {
-			return 1, true
-		}
+func fewestStepsWithReturn(in string) (int, error) {
+	g := mustParseGrid(in)
 
-		cvisited := visited.clone()
-		cvisited.add(adj)
+	min := 1
+	max := g.maxNum()
 
-		// hash := makeCacheKey(visited, adj, dest)
-		// res, ok := cache[hash]
-		// if !ok {
-		// 	subSteps, subOk := walkShortestTo(level+1, cache, g, cvisited, adj, dest)
-		// 	res.steps = subSteps
-		// 	res.ok = subOk
-		// 	cache[hash] = res
-		// } else {
-		// 	log("cache hit")
-		// }
-		var res cacheResult
-
-		subSteps, subOk := walkShortestTo(level+1, cache, g, cvisited, adj, dest)
-		res.steps = subSteps
-		res.ok = subOk
-
-		if !res.ok {
-			continue
-		}
-		if found && (res.steps+1 >= minSteps) {
-			continue
-		}
-
-		minSteps = res.steps + 1
-		found = true
+	//search all permutations of [1...max]
+	test := make([]int, max)
+	for i := 0; i < len(test); i++ {
+		test[i] = min
 	}
 
-	return minSteps, found
-}
+	containsDupl := func(ns []int) bool {
+		m := map[int]bool{}
+		for _, n := range ns {
+			if _, ok := m[n]; ok {
+				return true
+			}
+			m[n] = true
+		}
+		return false
+	}
 
-func makeCacheKey(vs pointSet, pt1 point, pt2 point) string {
-	return vs.hash() + "-" + pt1.hash() + "-" + pt2.hash()
-}
+	next := func() bool {
+		for i := 0; i < len(test); i++ {
+			if test[i] < max {
+				test[i]++
+				return true
+			} else {
+				test[i] = min
+			}
+		}
+		return false
+	}
 
-type cacheResult struct {
-	steps int
-	ok    bool
-}
+	type pair struct {
+		a, b int
+	}
+	cache := map[pair]int{}
 
-//
+	cloneTestWith0 := func() []int {
+		ct := make([]int, len(test))
+		copy(ct, test)
+		ct = append(ct, 0)
+		return ct
+	}
 
-// func makeCacheKey(vs pointSet, ns numberSet, pt point) string {
-// 	return vs.hash() + "-" + ns.hash() + "-" + pt.hash()
-// }
+	minSteps := 0
+	for {
+		ok := next()
+		if !ok {
+			break
+		}
+		if containsDupl(test) {
+			continue
+		}
+		ctest0 := cloneTestWith0()
 
-// type cacheResult struct {
-// 	steps int
-// 	ok    bool
-// }
+		currSteps := 0
+		prevNum := 0
+		for _, num := range ctest0 {
+			var subSteps int
+			if s, ok := cache[pair{prevNum, num}]; ok {
+				subSteps = s
+			} else {
+				subSteps = fewestStepsBetween(g, prevNum, num)
+				cache[pair{prevNum, num}] = subSteps
+			}
 
-// func walk(cache map[string]cacheResult, g *grid, visited pointSet, left numberSet, curr point) (int, bool) {
-// 	minSteps := 0
-// 	found := false
-// 	adjs := g.adjacents(curr)
-// 	for _, adj := range adjs {
-// 		if visited.contains(adj) {
-// 			continue
-// 		}
+			currSteps += subSteps
+			prevNum = num
+		}
+		if minSteps == 0 || currSteps < minSteps {
+			minSteps = currSteps
+		}
+		log("%v => %d", ctest0, currSteps)
+	}
 
-// 		cvisited := visited.clone()
-// 		cvisited.add(adj)
-// 		cleft := left.clone()
-
-// 		if num, ok := g.numbers[adj]; ok && cleft.contains(num) {
-// 			log("found %d", num)
-// 			cleft.remove(num)
-// 			if cleft.empty() {
-// 				log("found path %d", num)
-// 				return 1, true
-// 			}
-// 			// reset visited
-// 			cvisited = pointSet{adj: true}
-// 		}
-
-// 		hash := makeCacheKey(visited, cleft, adj)
-// 		res, ok := cache[hash]
-// 		if !ok {
-// 			subSteps, subOk := walk(cache, g, cvisited, cleft, adj)
-// 			res.steps = subSteps
-// 			res.ok = subOk
-// 			cache[hash] = res
-// 		}
-
-// 		if !res.ok {
-// 			continue
-// 		}
-// 		if found && (res.steps+1 >= minSteps) {
-// 			continue
-// 		}
-
-// 		minSteps = res.steps + 1
-// 		found = true
-
-// 	}
-
-// 	return minSteps, found
-// }
-
-func part2MainFunc(in string) (int, error) {
-	return 0, nil
+	return minSteps, nil
 }
