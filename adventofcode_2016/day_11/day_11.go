@@ -45,8 +45,8 @@ func fatal(pattern string, args ...interface{}) {
 	panic(fmt.Sprintf(pattern+"\n", args...))
 }
 
-const skip1 = false
-const skip2 = true
+const skip1 = true
+const skip2 = false
 
 func Part1() {
 	if skip1 {
@@ -463,7 +463,8 @@ func minSteps(st *state) (int, error) {
 	// }
 	// dumpMoves(mvs)
 	// return steps, nil
-	return minStepsDijkstra(st), nil
+	return minStepsDijkstraOrderedList(st), nil
+	//return minStepsDijkstra(st), nil
 }
 
 func cloneVisited(vs map[string]int) map[string]int {
@@ -553,7 +554,7 @@ func (l *orderedList) add(s *state) {
 	}
 
 	if l.first == l.last {
-		if elt.state.pathValue <= l.first.state.pathValue {
+		if elt.state.pathValue < l.first.state.pathValue {
 			elt.next = l.first
 			l.first = elt
 		} else {
@@ -563,7 +564,7 @@ func (l *orderedList) add(s *state) {
 		return
 	}
 
-	if elt.state.pathValue <= l.first.state.pathValue {
+	if elt.state.pathValue < l.first.state.pathValue {
 		elt.next = l.first
 		l.first = elt
 		return
@@ -577,7 +578,7 @@ func (l *orderedList) add(s *state) {
 	prev := l.first
 	curr := l.first.next
 	for curr != nil {
-		if elt.state.pathValue <= curr.state.pathValue {
+		if elt.state.pathValue < curr.state.pathValue {
 			prev.next = elt
 			elt.next = curr
 			return
@@ -642,6 +643,9 @@ func minStepsDijkstra(st *state) int {
 
 	visit := func(s *state) {
 		hash := s.hash()
+		if _, ok := nodes[hash]; ok {
+			log("alreday in nodes: %s", hash)
+		}
 		//nodes[hash] = s
 		nodes[hash] = true
 		delete(notVisited, hash)
@@ -650,6 +654,7 @@ func minStepsDijkstra(st *state) int {
 	start := st.clone()
 	start.pathValue = 0
 	notVisited[start.hash()] = start
+	step := 0
 	for {
 		n := notVisitedNodeWithMinDist()
 		//n.visited = true
@@ -680,8 +685,75 @@ func minStepsDijkstra(st *state) int {
 		}
 		lenNs := len(nodes)
 		lenNotVs := len(notVisited)
-		if lenNs%1000 == 0 {
-			log("nodes = %d, not_visited = %d", lenNs, lenNotVs)
+		if step%1000 == 0 {
+			log("%d: nodes = %d, not_visited = %d", step, lenNs, lenNotVs)
 		}
+		step++
+	}
+}
+
+func minStepsDijkstraOrderedList(st *state) int {
+
+	nodes := map[string]bool{}
+	notVisited := &orderedList{}
+	notVisitedHashes := map[string]bool{}
+
+	// visit := func(s *state) {
+	// 	hash := s.hash()
+	// 	if _, ok := nodes[hash]; ok {
+	// 		log
+	// 		return
+	// 	}
+	// 	nodes[hash] = true
+	// }
+
+	start := st.clone()
+	start.pathValue = 0
+	notVisited.add(start)
+	step := 0
+	for {
+		if notVisited.size() == 0 {
+			fatal("no not visited nodes, but also not complete")
+		}
+		n := notVisited.mustTakeFirst()
+		hash := n.hash()
+		if _, ok := nodes[hash]; ok {
+			log("%d: already in nodes: %s", step, hash)
+		}
+		nodes[hash] = true
+		delete(notVisitedHashes, hash)
+
+		mvs := n.allowedMoves()
+		for _, mv := range mvs {
+			cs := n.clone()
+			cs.execMove(mv)
+			if cs.complete() {
+				return n.pathValue + 1
+			}
+
+			hash := cs.hash()
+			if _, ok := nodes[hash]; ok {
+				// already visited
+				continue
+			}
+			if _, ok := notVisitedHashes[hash]; ok {
+				continue
+			}
+
+			cs.pathValue = math.MaxInt64
+			test := n.pathValue + 1
+			if test < cs.pathValue {
+				cs.pathValue = test
+				cs.prev = n
+			}
+			notVisited.add(cs)
+			notVisitedHashes[hash] = true
+		}
+		lenNs := len(nodes)
+		lenNotVs := notVisited.size()
+		if step%1000 == 0 {
+			log("%d: nodes = %d, not_visited = %d", step, lenNs, lenNotVs)
+		}
+		step++
 	}
 }
