@@ -5,8 +5,6 @@ import (
 	"testing"
 )
 
-const inputTest = ""
-
 func TestPowerLevel(t *testing.T) {
 	var res int
 

@@ -2,6 +2,7 @@ package day_11
 
 import (
 	"adventofcode_2018/errutil"
+	"adventofcode_2018/intutil"
 	"fmt"
 )
 
@@ -83,7 +84,8 @@ func coordOfLargestPowerLevelFlexSquare(serial int) (string, error) {
 	var maxPowerPoint point
 	for x := 1; x <= xsize; x++ {
 		for y := 1; y <= ysize; y++ {
-			for size := 1; size <= xsize-x+1; size++ {
+			ref := intutil.MaxInt(x, y)
+			for size := 1; size <= xsize-ref+1; size++ {
 				log("check: %s x %d", point{x, y}, size)
 				//
 				var sqPow int
