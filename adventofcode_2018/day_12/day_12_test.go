@@ -25,7 +25,7 @@ const inputRulesTest = `
 `
 
 func TestPart1MainFunc(t *testing.T) {
-	res, err := part1MainFunc(inputStateTest, inputRulesTest, 20)
+	res, err := part1MainFunc(inputStateTest, inputRulesTest, 20, 0)
 	testutil.CheckUnexpectedError(t, err)
 	var exp int = 325
 	if exp != res {
