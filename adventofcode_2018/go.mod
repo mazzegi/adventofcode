@@ -9,4 +9,4 @@ require (
 	github.com/pkg/errors v0.9.1
 )
 
-require github.com/mazzegi/slices v0.0.0-20220225112424-2c373b35babc // indirect
+require github.com/mazzegi/slices v0.0.0-20220225112424-2c373b35babc
