@@ -311,6 +311,11 @@ func (e *Env) drop() bool {
 		}
 
 		if blocked == Flow {
+			if e.eltAt(pos.down().down()) == Flow {
+				e.Put(pos.x, pos.y, Flow)
+				return true
+			}
+
 			// see, if theres space for this drop to flow
 			dok := false
 			dr := pos.downRight()
