@@ -19,7 +19,7 @@ y=13, x=498..504
 func TestPart1MainFunc(t *testing.T) {
 	res, err := part1MainFunc(inputTest)
 	testutil.CheckUnexpectedError(t, err)
-	var exp int = -42
+	var exp int = 57
 	if exp != res {
 		t.Fatalf("want %d, have %d", exp, res)
 	}

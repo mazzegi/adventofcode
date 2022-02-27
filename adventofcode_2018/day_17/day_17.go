@@ -85,7 +85,21 @@ type Env struct {
 }
 
 func (e *Env) Put(x, y int, elt rune) {
-	e.rows[y].elts[x] = elt
+	if y < 0 || y >= len(e.rows) {
+		panic(errors.Errorf("index out of bounds y = %d (x = %d)", y, x))
+	}
+	row := e.rows[y]
+	if x < 0 || x >= len(row.elts) {
+		panic(errors.Errorf("index out of bounds x = %d (y = %d)", x, y))
+	}
+	if elt == Water {
+		eltDown := e.eltAt(point{x, y}.down())
+		if !(eltDown == Clay || eltDown == Water) {
+			panic("cannot put water onto non clay/water")
+		}
+	}
+
+	row.elts[x] = elt
 }
 
 func (e *Env) dump() {
@@ -192,6 +206,18 @@ func (e *Env) canFlowTo(pos point) (bool, rune) {
 	return elt == Sand, elt
 }
 
+func (e *Env) count(elt rune) int {
+	var cnt int
+	for _, row := range e.rows {
+		for _, e := range row.elts {
+			if e == elt {
+				cnt++
+			}
+		}
+	}
+	return cnt
+}
+
 func (e *Env) drop() bool {
 	// creates a new flow at the spring
 	pos := e.spring
@@ -200,6 +226,7 @@ func (e *Env) drop() bool {
 	}
 	pos = pos.down()
 
+	mustFlow := false
 	moveLeft := func() (ok bool, done bool) {
 		dl := pos.left()
 		ok, blocked := e.canFlowTo(dl)
@@ -208,6 +235,10 @@ func (e *Env) drop() bool {
 			return true, false
 		}
 		if blocked == Flow {
+			e.Put(pos.x, pos.y, Flow)
+			return false, true
+		}
+		if blocked == Clay && mustFlow {
 			e.Put(pos.x, pos.y, Flow)
 			return false, true
 		}
@@ -226,7 +257,11 @@ func (e *Env) drop() bool {
 			return false, true
 		}
 		if blocked == Clay || blocked == Water {
-			e.Put(pos.x, pos.y, Water)
+			if mustFlow {
+				e.Put(pos.x, pos.y, Flow)
+			} else {
+				e.Put(pos.x, pos.y, Water)
+			}
 			return false, true
 		}
 		return false, false
@@ -237,6 +272,7 @@ func (e *Env) drop() bool {
 		dp := pos.down()
 		ok, blocked := e.canFlowTo(dp)
 		if ok {
+			mustFlow = false
 			pos = dp
 			isMovingLeft = true
 			continue
@@ -288,6 +324,7 @@ func (e *Env) drop() bool {
 				pos = dr
 				isMovingLeft = false
 				dok = true
+				mustFlow = true
 			}
 			if !dok {
 				dl := pos.downLeft()
@@ -300,6 +337,7 @@ func (e *Env) drop() bool {
 					pos = dl
 					isMovingLeft = true
 					dok = true
+					mustFlow = true
 				}
 			}
 			if !dok {
@@ -347,12 +385,24 @@ func part1MainFunc(in string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	for env.drop() {
-		env.dump()
-	}
+
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log("recovered: %v", r)
+			}
+		}()
+		for env.drop() {
+			//env.dump()
+		}
+	}()
+
 	env.dump()
 
-	return 0, nil
+	wCnt := env.count(Water)
+	fCnt := env.count(Flow)
+
+	return wCnt + fCnt, nil
 }
 
 func part2MainFunc(in string) (int, error) {
