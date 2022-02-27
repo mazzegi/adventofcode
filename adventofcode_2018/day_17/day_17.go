@@ -241,9 +241,72 @@ func (e *Env) drop() bool {
 			isMovingLeft = true
 			continue
 		}
-		if blocked == Nirwana || blocked == Flow {
+		//if blocked == Nirwana || blocked == Flow {
+		if blocked == Nirwana {
 			e.Put(pos.x, pos.y, Flow)
 			return true
+		}
+		if blocked == Water {
+			// see, if theres, space for this drop
+			wp := pos.down()
+		outerleft:
+			for {
+				wp = wp.left()
+				switch e.eltAt(wp) {
+				case Sand:
+					e.Put(wp.x, wp.y, Water)
+					return true
+				case Clay:
+					break outerleft
+				}
+			}
+			wp = pos.down()
+		outerright:
+			for {
+				wp = wp.right()
+				switch e.eltAt(wp) {
+				case Sand:
+					e.Put(wp.x, wp.y, Water)
+					return true
+				case Clay:
+					break outerright
+				}
+			}
+		}
+
+		if blocked == Flow {
+			// see, if theres space for this drop to flow
+			dok := false
+			dr := pos.downRight()
+			underDR := e.eltAt(dr.down())
+			if underDR == Nirwana || underDR == Sand {
+				e.Put(pos.x, pos.y, Flow)
+				return true
+			}
+
+			if e.eltAt(dr) == Sand && (underDR == Clay || underDR == Water) {
+				pos = dr
+				isMovingLeft = false
+				dok = true
+			}
+			if !dok {
+				dl := pos.downLeft()
+				underDL := e.eltAt(dl.down())
+				if underDL == Nirwana || underDL == Sand {
+					e.Put(pos.x, pos.y, Flow)
+					return true
+				}
+				if e.eltAt(dl) == Sand && (underDL == Clay || underDL == Water) {
+					pos = dl
+					isMovingLeft = true
+					dok = true
+				}
+			}
+			if !dok {
+				e.Put(pos.x, pos.y, Flow)
+				return true
+			}
+			//check for nirwana put flow and return
 		}
 
 		if isMovingLeft {
@@ -287,6 +350,7 @@ func part1MainFunc(in string) (int, error) {
 	for env.drop() {
 		env.dump()
 	}
+	env.dump()
 
 	return 0, nil
 }
