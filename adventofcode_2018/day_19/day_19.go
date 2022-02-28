@@ -19,6 +19,10 @@ func fatal(pattern string, args ...interface{}) {
 }
 
 func Part1() {
+	skip := true
+	if skip {
+		return
+	}
 	res, err := part1MainFunc(input, inputIP)
 	errutil.ExitOnErr(err)
 	log("part1: result = %d", res)

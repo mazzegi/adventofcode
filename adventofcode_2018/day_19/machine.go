@@ -123,6 +123,7 @@ func (m *Machine) Run() {
 			return
 		}
 		is := m.iss[m.ipval]
+
 		m.regs[m.ip] = m.ipval
 		m.Process(is.Op, [3]int{is.Args[0], is.Args[1], is.Args[2]})
 		m.ipval = m.regs[m.ip]
