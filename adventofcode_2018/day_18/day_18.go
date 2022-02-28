@@ -4,6 +4,7 @@ import (
 	"adventofcode_2018/errutil"
 	"adventofcode_2018/readutil"
 	"fmt"
+	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -17,17 +18,17 @@ func fatal(pattern string, args ...interface{}) {
 }
 
 func Part1() {
-	skip := true
+	skip := false
 	if skip {
 		return
 	}
-	res, err := part1MainFunc(input, 10)
+	res, err := part1MainFunc(input, 1000)
 	errutil.ExitOnErr(err)
 	log("part1: result = %d", res)
 }
 
 func Part2() {
-	res, err := part1MainFunc(input, 1000)
+	res, err := part2MainFunc(input)
 	errutil.ExitOnErr(err)
 	log("part2: result = %d", res)
 }
@@ -102,16 +103,20 @@ func countValues(cs []*Cell, val rune) int {
 	return cnt
 }
 
-func (g *Grid) dump() {
-	log("")
+func (g *Grid) String() string {
+	var sl []string
 	for _, row := range g.rows {
 		var rs string
 		for _, cell := range row.cells {
 			rs += string(cell.value)
 		}
-		log(rs)
+		sl = append(sl, rs)
 	}
-	log("")
+	return strings.Join(sl, "\n")
+}
+
+func (g *Grid) dump() {
+	log("\n%s\n", g.String())
 }
 
 func (g *Grid) numOf(typ rune) int {
@@ -156,20 +161,73 @@ func (g *Grid) tick() {
 	}
 }
 
+func (g *Grid) hash() string {
+	return g.String()
+	// var hs []byte
+	// for _, row := range g.rows {
+	// 	for _, cell := range row.cells {
+	// 		hs = append(hs, byte(cell.value))
+	// 	}
+	// }
+	// return fmt.Sprintf("%x", md5.Sum(hs))
+}
+
 func part1MainFunc(in string, ticks int) (int, error) {
 	g, err := parseGrid(in)
 	if err != nil {
 		return 0, err
 	}
-	g.dump()
+	//g.dump()
 	for i := 0; i < ticks; i++ {
 		g.tick()
-		g.dump()
+		//g.dump()
 	}
 
 	return g.numOf(trees) * g.numOf(lumberYard), nil
 }
 
 func part2MainFunc(in string) (int, error) {
-	return 0, nil
+	g, err := parseGrid(in)
+	if err != nil {
+		return 0, err
+	}
+	hashes := map[string]int{}
+	num := 0
+	var repeated int
+	hashes[g.hash()] = num
+	for {
+		g.tick()
+		num++
+		hs := g.hash()
+		if i, ok := hashes[hs]; ok {
+			repeated = i
+			break
+		}
+		hashes[g.hash()] = num
+	}
+	period := num - repeated
+	log("repeated %d => %d; period = %d", num, repeated, period)
+
+	total := 1000000000
+	for {
+		if num+period < total {
+			num += period
+		} else {
+			break
+		}
+	}
+	for num < total {
+		num++
+		g.tick()
+	}
+
+	//total := 1000000000
+	// total := 1000
+	// rem := total - (num-repeated)*(total/(num-repeated))
+	// log("rem: %d", rem)
+	// for i := 0; i < rem; i++ {
+	// 	g.tick()
+	// }
+
+	return g.numOf(trees) * g.numOf(lumberYard), nil
 }
