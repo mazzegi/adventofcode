@@ -122,6 +122,9 @@ func (m *Machine) Run() {
 		if m.ipval < 0 || m.ipval >= len(m.iss) {
 			return
 		}
+		if m.ipval == 1 {
+			log("%v", m.regs)
+		}
 		is := m.iss[m.ipval]
 
 		m.regs[m.ip] = m.ipval

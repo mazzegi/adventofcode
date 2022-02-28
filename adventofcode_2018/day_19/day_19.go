@@ -29,6 +29,10 @@ func Part1() {
 }
 
 func Part2() {
+	skip := false
+	if skip {
+		return
+	}
 	res, err := part2MainFunc(input, inputIP)
 	errutil.ExitOnErr(err)
 	log("part2: result = %d", res)
@@ -53,6 +57,10 @@ func parseInstructions(in string) ([]Instr, error) {
 }
 
 func part1MainFunc(in string, ip int) (int, error) {
+	doFunc := true
+	if doFunc {
+		return programFunc(0), nil
+	}
 	iss, err := parseInstructions(in)
 	if err != nil {
 		return 0, err
@@ -65,6 +73,17 @@ func part1MainFunc(in string, ip int) (int, error) {
 }
 
 func part2MainFunc(in string, ip int) (int, error) {
+	res0 := programFunc(0)
+	if res0 != 878 {
+		return 0, errors.Errorf("crosscheck failed. want 878, have %d", res0)
+	}
+	log("crosscheck succeeded")
+
+	doFunc := true
+	if doFunc {
+		return programFunc(1), nil
+	}
+
 	iss, err := parseInstructions(in)
 	if err != nil {
 		return 0, err
