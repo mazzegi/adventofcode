@@ -1,13 +1,14 @@
 package day_24
 
 import (
-	"adventofcode_2021/errutil"
-	"adventofcode_2021/readutil"
 	"fmt"
 	"math"
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2021/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2021/readutil"
 
 	"github.com/pkg/errors"
 )
@@ -28,7 +29,6 @@ func Part2() {
 	log("part2: result = %d", res)
 }
 
-//
 type varValueFunc func(v variable) int
 
 type number interface {
@@ -137,7 +137,6 @@ func (i eql) VarAndNum() (variable, number) {
 	return i.v, i.num
 }
 
-//
 func parseInstruction(s string) (instruction, error) {
 	cvar := func(s string) (variable, error) {
 		switch s {
@@ -237,7 +236,6 @@ func parseInstructions(s string) ([]instruction, error) {
 	return iss, nil
 }
 
-//
 func splitInSubs(iss []instruction) [][]instruction {
 	subs := [][]instruction{}
 	currSub := []instruction{}
@@ -257,7 +255,6 @@ func splitInSubs(iss []instruction) [][]instruction {
 	return subs
 }
 
-//
 type alu struct {
 	iss        []instruction
 	w, x, y, z int
@@ -356,7 +353,6 @@ func (a *alu) run(in []int, initZ int) {
 //z0 % 26 + C1 == in ? z = z0 / C0: z = z0 / C0 * 26 + in + C2
 // c0 is always 1 or 26
 
-//
 func extraFunc(c0, c1, c2, z0, n int) int {
 	if ((z0 % 26) + c1) == n {
 		return z0 / c0

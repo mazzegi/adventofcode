@@ -1,9 +1,10 @@
 package day_14
 
 import (
-	"adventofcode_2017/testutil"
 	"encoding/hex"
 	"testing"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2017/testutil"
 )
 
 const inputTest = "flqrgnkx"

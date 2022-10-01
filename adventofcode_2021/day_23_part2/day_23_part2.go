@@ -1,9 +1,10 @@
 package day_23_part2
 
 import (
-	"adventofcode_2021/errutil"
 	"fmt"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2021/errutil"
 )
 
 func setupTest() *burrow {

@@ -47,11 +47,12 @@ Count the number of valid passports - those that have all required fields. Treat
 package main
 
 import (
-	"adventofcode_2020/passport"
 	"bufio"
 	"bytes"
 	"fmt"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2020/passport"
 )
 
 func main() {
@@ -92,7 +93,7 @@ func main() {
 
 }
 
-//input
+// input
 var inputTest = `
 ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
 byr:1937 iyr:2017 cid:147 hgt:183cm

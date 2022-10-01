@@ -1,10 +1,11 @@
 package day_16
 
 import (
-	"adventofcode_2021/day_16/bits"
-	"adventofcode_2021/errutil"
 	"fmt"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2021/day_16/bits"
+	"github.com/mazzegi/adventofcode/adventofcode_2021/errutil"
 
 	"github.com/pkg/errors"
 )

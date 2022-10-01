@@ -1,8 +1,9 @@
 package main
 
 import (
-	"adventofcode_2015/rpg"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2015/rpg"
 )
 
 func newBoss() *rpg.Character {

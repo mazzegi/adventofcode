@@ -1,9 +1,10 @@
 package day_16
 
 import (
-	"adventofcode_2021/testutil"
 	"fmt"
 	"testing"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2021/testutil"
 )
 
 func TestSumOfVerions(t *testing.T) {

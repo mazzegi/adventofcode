@@ -1,9 +1,10 @@
 package main
 
 import (
-	"adventofcode_2018/guards"
 	"bytes"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2018/guards"
 )
 
 type State struct {

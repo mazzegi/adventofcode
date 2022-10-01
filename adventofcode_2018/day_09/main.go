@@ -1,7 +1,7 @@
 package main
 
 import (
-	"adventofcode_2018/marble"
+	"github.com/mazzegi/adventofcode/adventofcode_2018/marble"
 )
 
 func main() {

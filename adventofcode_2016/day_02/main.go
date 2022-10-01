@@ -1,9 +1,10 @@
 package main
 
 import (
-	"adventofcode_2016/errutil"
 	"fmt"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2016/errutil"
 
 	"github.com/pkg/errors"
 )

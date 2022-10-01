@@ -1,8 +1,9 @@
 package day_11
 
 import (
-	"adventofcode_2018/testutil"
 	"testing"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2018/testutil"
 )
 
 func TestPowerLevel(t *testing.T) {

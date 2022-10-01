@@ -1,9 +1,10 @@
 package main
 
 import (
-	"adventofcode_2020/shuttle"
 	"fmt"
 	"time"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2020/shuttle"
 )
 
 func main() {

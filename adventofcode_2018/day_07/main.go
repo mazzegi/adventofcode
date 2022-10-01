@@ -1,11 +1,12 @@
 package main
 
 import (
-	"adventofcode_2018/cond"
 	"bufio"
 	"bytes"
 	"fmt"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2018/cond"
 )
 
 func main() {

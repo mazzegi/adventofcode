@@ -1,11 +1,12 @@
 package day_24
 
 import (
-	"adventofcode_2016/errutil"
-	"adventofcode_2016/readutil"
 	"fmt"
 	"math"
 	"strconv"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2016/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2016/readutil"
 )
 
 func log(pattern string, args ...interface{}) {
@@ -40,7 +41,6 @@ func Part2() {
 	log("part2: result = %d", res)
 }
 
-//
 func mustParseGrid(in string) *dijkstraGrid {
 	g := &dijkstraGrid{
 		walls:   map[point]bool{},

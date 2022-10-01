@@ -1,9 +1,10 @@
 package main
 
 import (
-	"adventofcode_2019/wire"
 	"fmt"
 	"os"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2019/wire"
 )
 
 func main() {

@@ -1,11 +1,12 @@
 package main
 
 import (
-	"adventofcode_2015/turing"
 	"bufio"
 	"bytes"
 	"fmt"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2015/turing"
 )
 
 func main() {

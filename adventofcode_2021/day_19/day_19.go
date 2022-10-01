@@ -1,14 +1,15 @@
 package day_19
 
 import (
-	"adventofcode_2021/day_19/rot3d"
-	"adventofcode_2021/errutil"
-	"adventofcode_2021/intutil"
-	"adventofcode_2021/readutil"
 	"fmt"
 	"math"
 	"sort"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2021/day_19/rot3d"
+	"github.com/mazzegi/adventofcode/adventofcode_2021/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2021/intutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2021/readutil"
 
 	"github.com/pkg/errors"
 )
@@ -32,7 +33,6 @@ func Part2() {
 	fmt.Printf("part2: result = %d\n", res)
 }
 
-//
 type point struct {
 	x, y, z int
 }
@@ -115,7 +115,6 @@ func parseScanners(in string) ([]*scanner, error) {
 	return scs, nil
 }
 
-//
 type orientation []rot3d.Matrix
 
 func (o orientation) apply(pt point) point {
@@ -287,7 +286,6 @@ func init() {
 // 	return os
 // }
 
-//
 func pointOrientations(p point) []point {
 	var pos []point
 	os := allOrientations
@@ -400,7 +398,6 @@ func part2MainFunc(in string) (int, error) {
 	return 0, nil
 }
 
-//
 const RANGE = 1000
 
 /*
@@ -540,7 +537,6 @@ func commonPoints(pts1 []point, pts2 []point, cp1, cp2 point) ([]point, []point)
 	return common, common2
 }
 
-//
 func probe() {
 	scs, err := parseScanners(input)
 	errutil.ExitOnErr(err)

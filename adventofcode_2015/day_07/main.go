@@ -1,12 +1,13 @@
 package main
 
 import (
-	"adventofcode_2015/logic"
 	"bufio"
 	"bytes"
 	"fmt"
 	"sort"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2015/logic"
 )
 
 func main() {

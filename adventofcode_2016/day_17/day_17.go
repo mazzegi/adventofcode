@@ -1,9 +1,10 @@
 package day_17
 
 import (
-	"adventofcode_2016/errutil"
 	"crypto/md5"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2016/errutil"
 )
 
 func log(pattern string, args ...interface{}) {
@@ -26,7 +27,6 @@ func Part2() {
 	log("part2: result = %d", res)
 }
 
-//
 type dir string
 
 const (
@@ -79,7 +79,6 @@ func openDoors(passcode string, path string) dirs {
 	return openDirs
 }
 
-//
 type point struct {
 	x, y int
 }
@@ -174,7 +173,6 @@ func walkShortest(g *grid, path dirs, curr point, dest point) (minDist int, minP
 	return
 }
 
-//
 func longestPath(passcode string, sizeX, sizeY int) (int, error) {
 	curr := p(0, 0)
 	dest := p(sizeX-1, sizeY-1)

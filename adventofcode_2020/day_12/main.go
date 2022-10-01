@@ -1,11 +1,12 @@
 package main
 
 import (
-	"adventofcode_2020/ship"
 	"bufio"
 	"bytes"
 	"fmt"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2020/ship"
 )
 
 func main() {

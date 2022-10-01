@@ -1,9 +1,10 @@
 package day_23
 
 import (
-	"adventofcode_2016/assembunny"
-	"adventofcode_2016/errutil"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2016/assembunny"
+	"github.com/mazzegi/adventofcode/adventofcode_2016/errutil"
 
 	"github.com/pkg/errors"
 )

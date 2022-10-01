@@ -1,13 +1,14 @@
 package main
 
 import (
-	"adventofcode_2020/xmas"
 	"bufio"
 	"bytes"
 	"fmt"
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2020/xmas"
 )
 
 func main() {

@@ -1,6 +1,6 @@
 package main
 
-import "adventofcode_2016/day_12"
+import "github.com/mazzegi/adventofcode/adventofcode_2016/day_12"
 
 func main() {
 	day_12.Part1()

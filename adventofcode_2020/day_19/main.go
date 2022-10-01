@@ -1,11 +1,12 @@
 package main
 
 import (
-	"adventofcode_2020/monster"
 	"bufio"
 	"bytes"
 	"fmt"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2020/monster"
 )
 
 func main() {
@@ -200,7 +201,7 @@ var inputTest0 = Input{
 	`,
 }
 
-//match ababbb and abbbab
+// match ababbb and abbbab
 var inputTest = Input{
 	RawRules: `
 	0: 4 1 5

@@ -1,8 +1,9 @@
 package day_17
 
 import (
-	"adventofcode_2021/testutil"
 	"testing"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2021/testutil"
 )
 
 var targetAreaTest = area{

@@ -1,8 +1,9 @@
 package day_23_part2
 
 import (
-	"adventofcode_2021/testutil"
 	"testing"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2021/testutil"
 )
 
 func TestPart1MainFunc(t *testing.T) {
@@ -23,7 +24,6 @@ func TestPart2MainFunc(t *testing.T) {
 	}
 }
 
-//
 func TestPossibleMoves(t *testing.T) {
 	b := setupTest()
 	mvs := b.possibleMoves()

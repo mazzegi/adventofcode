@@ -1,9 +1,10 @@
 package day_24
 
 import (
-	"adventofcode_2017/errutil"
-	"adventofcode_2017/readutil"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2017/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2017/readutil"
 )
 
 func log(pattern string, args ...interface{}) {
@@ -26,7 +27,6 @@ func Part2() {
 	log("part2: result = %d", res)
 }
 
-//
 type component struct {
 	id   int
 	pin1 int

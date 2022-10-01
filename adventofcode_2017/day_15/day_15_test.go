@@ -1,8 +1,9 @@
 package day_15
 
 import (
-	"adventofcode_2017/testutil"
 	"testing"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2017/testutil"
 )
 
 func TestPart1MainFunc(t *testing.T) {

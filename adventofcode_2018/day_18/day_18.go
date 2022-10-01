@@ -1,10 +1,11 @@
 package day_18
 
 import (
-	"adventofcode_2018/errutil"
-	"adventofcode_2018/readutil"
 	"fmt"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2018/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2018/readutil"
 
 	"github.com/pkg/errors"
 )
@@ -33,7 +34,6 @@ func Part2() {
 	log("part2: result = %d", res)
 }
 
-//
 const (
 	openGround rune = '.'
 	trees      rune = '|'

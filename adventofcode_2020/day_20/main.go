@@ -1,10 +1,11 @@
 package main
 
 import (
-	"adventofcode_2020/jigsaw"
 	"bufio"
 	"bytes"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2020/jigsaw"
 )
 
 func main() {

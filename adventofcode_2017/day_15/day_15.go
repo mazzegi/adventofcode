@@ -1,8 +1,9 @@
 package day_15
 
 import (
-	"adventofcode_2017/errutil"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2017/errutil"
 )
 
 type genValues struct {

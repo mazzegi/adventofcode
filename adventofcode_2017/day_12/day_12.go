@@ -1,10 +1,11 @@
 package day_12
 
 import (
-	"adventofcode_2017/errutil"
-	"adventofcode_2017/readutil"
 	"fmt"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2017/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2017/readutil"
 
 	"github.com/pkg/errors"
 )
@@ -31,7 +32,7 @@ type program struct {
 	group *int
 }
 
-//29 <-> 29, 142, 474, 552, 1089
+// 29 <-> 29, 142, 474, 552, 1089
 func parseProgram(s string) (*program, error) {
 	s = strings.ReplaceAll(s, " <-> ", ", ")
 	ns, err := readutil.ReadInts(s, ",")

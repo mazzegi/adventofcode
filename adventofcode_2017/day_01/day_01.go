@@ -1,10 +1,11 @@
 package day_01
 
 import (
-	"adventofcode_2017/errutil"
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2017/errutil"
 
 	"github.com/pkg/errors"
 )

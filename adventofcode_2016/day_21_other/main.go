@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"adventofcode_2016/day_21_other/utils"
+	"github.com/mazzegi/adventofcode/adventofcode_2016/day_21_other/utils"
 )
 
 func main() {

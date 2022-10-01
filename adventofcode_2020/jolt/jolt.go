@@ -1,10 +1,11 @@
 package jolt
 
 import (
-	"adventofcode_2020/ints"
 	"fmt"
 	"sort"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2020/ints"
 )
 
 func matches(v, prev int) bool {
@@ -377,7 +378,7 @@ func ArrangementsRec(in []int) int {
 	return cnt
 }
 
-//assume in is already sorted
+// assume in is already sorted
 func chains(top bool, prev int, in []int) int {
 	//fmt.Printf("chains (prev=%02d): %v\n", prev, in)
 	if len(in) < 2 {
@@ -474,7 +475,7 @@ func fac(n int) int {
 	return n * fac(n-1)
 }
 
-//////
+// ////
 type OneGroup struct {
 	values []int
 }

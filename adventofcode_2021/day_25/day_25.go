@@ -1,10 +1,11 @@
 package day_25
 
 import (
-	"adventofcode_2021/errutil"
-	"adventofcode_2021/readutil"
 	"fmt"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2021/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2021/readutil"
 
 	"github.com/pkg/errors"
 )
@@ -25,7 +26,6 @@ func Part2() {
 	log("part2: result = %d", res)
 }
 
-//
 type point struct {
 	x, y int
 }

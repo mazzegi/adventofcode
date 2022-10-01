@@ -1,11 +1,12 @@
 package day_18
 
 import (
-	"adventofcode_2021/day_18/sfish"
-	"adventofcode_2021/readutil"
-	"adventofcode_2021/testutil"
 	"fmt"
 	"testing"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2021/day_18/sfish"
+	"github.com/mazzegi/adventofcode/adventofcode_2021/readutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2021/testutil"
 )
 
 const inputTest = `

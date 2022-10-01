@@ -11,10 +11,11 @@ package day_11
 //and a cobalt-compatible microchip
 
 import (
-	"adventofcode_2016/errutil"
 	"fmt"
 	"math"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2016/errutil"
 )
 
 func initTestState() *state {
@@ -71,7 +72,6 @@ func Part2() {
 	log("part2: result = %d", res)
 }
 
-//
 type chip struct {
 	elt   string
 	floor int
@@ -212,7 +212,6 @@ func (s *state) hash() string {
 	return fmt.Sprintf("%d-%s", s.elevatorFloor, strings.Join(sl, "-"))
 }
 
-//
 type pair struct {
 	item1 interface{}
 	item2 interface{}

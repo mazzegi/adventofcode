@@ -1,11 +1,12 @@
 package main
 
 import (
-	"adventofcode_2016/intutil"
 	"fmt"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2016/intutil"
 
 	"github.com/pkg/errors"
 )

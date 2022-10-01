@@ -1,9 +1,10 @@
 package sfish
 
 import (
-	"adventofcode_2021/testutil"
 	"fmt"
 	"testing"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2021/testutil"
 )
 
 func TestExplode(t *testing.T) {

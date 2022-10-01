@@ -1,12 +1,13 @@
 package main
 
 import (
-	"adventofcode_2018/nano"
 	"bufio"
 	"bytes"
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2018/nano"
 )
 
 func main() {

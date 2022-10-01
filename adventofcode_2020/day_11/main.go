@@ -1,9 +1,10 @@
 package main
 
 import (
-	"adventofcode_2020/seats"
 	"bytes"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2020/seats"
 )
 
 func main() {

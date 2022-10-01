@@ -1,9 +1,10 @@
 package day_11
 
 import (
-	"adventofcode_2018/errutil"
-	"adventofcode_2018/intutil"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2018/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2018/intutil"
 )
 
 func log(pattern string, args ...interface{}) {
@@ -26,7 +27,6 @@ func Part2() {
 	log("part1: result = %s", res)
 }
 
-//
 type point struct {
 	x, y int
 }

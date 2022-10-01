@@ -1,10 +1,11 @@
 package day_18
 
 import (
-	"adventofcode_2021/day_18/sfish"
-	"adventofcode_2021/errutil"
-	"adventofcode_2021/readutil"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2021/day_18/sfish"
+	"github.com/mazzegi/adventofcode/adventofcode_2021/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2021/readutil"
 
 	"github.com/pkg/errors"
 )

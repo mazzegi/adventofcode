@@ -1,12 +1,13 @@
 package day_06
 
 import (
-	"adventofcode_2017/errutil"
-	"adventofcode_2017/readutil"
-	"adventofcode_2017/stringutil"
 	"crypto/md5"
 	"encoding/binary"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2017/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2017/readutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2017/stringutil"
 
 	"github.com/pkg/errors"
 )
@@ -23,7 +24,6 @@ func Part2() {
 	fmt.Printf("part2: result = %d\n", res)
 }
 
-//
 type memory struct {
 	banks []int
 }

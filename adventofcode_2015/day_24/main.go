@@ -1,9 +1,10 @@
 package main
 
 import (
-	"adventofcode_2015/comb"
 	"fmt"
 	"sort"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2015/comb"
 )
 
 var inputTest = []int{1, 2, 3, 4, 5, 7, 8, 9, 10, 11}

@@ -1,12 +1,13 @@
 package main
 
 import (
-	"adventofcode_2018/polymer"
 	"fmt"
 	"io/ioutil"
 	"strings"
 	"time"
 	"unicode"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2018/polymer"
 )
 
 func main() {

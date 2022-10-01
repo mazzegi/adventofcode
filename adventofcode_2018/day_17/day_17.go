@@ -1,9 +1,10 @@
 package day_17
 
 import (
-	"adventofcode_2018/errutil"
 	"bytes"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2018/errutil"
 
 	"github.com/mazzegi/scan"
 	"github.com/pkg/errors"
@@ -29,7 +30,6 @@ func Part2() {
 	log("part2: result = %d", res)
 }
 
-//
 type scanDesc struct {
 	C1     string
 	C1Val  int
@@ -42,7 +42,6 @@ func parseScanDescs(in string) ([]scanDesc, error) {
 	return scan.Lines[scanDesc]("{{c1:string}}={{c1val:int}}, {{c2:string}}={{c2from:int}}..{{c2to:int}}", scan.BuiltinFuncs(), bytes.NewBufferString(in))
 }
 
-//
 type point struct {
 	x, y int
 }

@@ -1,11 +1,12 @@
 package day_21
 
 import (
-	"adventofcode_2016/errutil"
-	"adventofcode_2016/readutil"
 	"bytes"
 	"fmt"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2016/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2016/readutil"
 )
 
 func log(pattern string, args ...interface{}) {
@@ -28,7 +29,6 @@ func Part2() {
 	log("part2: result = %q", res)
 }
 
-//
 type operation interface {
 	apply(s []byte) []byte
 }
@@ -120,7 +120,6 @@ func mustParseOps(in string) []operation {
 	return ops
 }
 
-//
 func clone(bs []byte) []byte {
 	cbs := make([]byte, len(bs))
 	copy(cbs, bs)

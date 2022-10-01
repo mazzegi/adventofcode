@@ -1,9 +1,10 @@
 package day_19
 
 import (
-	"adventofcode_2017/errutil"
-	"adventofcode_2017/readutil"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2017/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2017/readutil"
 )
 
 func log(pattern string, args ...interface{}) {
@@ -37,7 +38,6 @@ const inputTest = `
 `
 */
 
-//
 type point struct {
 	x, y int
 }

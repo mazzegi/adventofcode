@@ -1,10 +1,11 @@
 package day_06
 
 import (
-	"adventofcode_2021/errutil"
-	"adventofcode_2021/readutil"
 	"fmt"
 	"math"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2021/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2021/readutil"
 
 	"github.com/pkg/errors"
 )

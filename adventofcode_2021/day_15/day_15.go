@@ -1,12 +1,13 @@
 package day_15
 
 import (
-	"adventofcode_2021/errutil"
-	"adventofcode_2021/readutil"
 	"math"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2021/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2021/readutil"
 
 	"fmt"
 
@@ -31,7 +32,6 @@ func Part2() {
 	fmt.Printf("part2: result = %d (in %s)\n", res, time.Since(t0))
 }
 
-//
 func parseGraph(in string) (*graph, error) {
 	g := &graph{}
 	lines := readutil.ReadLines(in)
@@ -145,7 +145,6 @@ func (g *graph) end() *node {
 	return g.mustNode(g.xdim-1, g.ydim-1)
 }
 
-//
 func p(x, y int) point {
 	return point{x: x, y: y}
 }
@@ -154,7 +153,6 @@ type point struct {
 	x, y int
 }
 
-//
 type path struct {
 	nodes []*node
 }
@@ -292,7 +290,6 @@ func lowestTotalRiskDup5(in string) (int, error) {
 	return end.pathValue, nil
 }
 
-//
 func dupPlus5(g *graph) *graph {
 	dg := &graph{
 		xdim: 5 * g.xdim,

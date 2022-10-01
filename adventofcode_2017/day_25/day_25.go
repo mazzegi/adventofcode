@@ -1,8 +1,9 @@
 package day_25
 
 import (
-	"adventofcode_2017/errutil"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2017/errutil"
 )
 
 func log(pattern string, args ...interface{}) {

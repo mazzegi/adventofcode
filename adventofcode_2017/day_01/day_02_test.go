@@ -1,9 +1,10 @@
 package day_01
 
 import (
-	"adventofcode_2017/testutil"
 	"fmt"
 	"testing"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2017/testutil"
 )
 
 func TestSolve(t *testing.T) {

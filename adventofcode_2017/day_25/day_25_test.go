@@ -1,8 +1,9 @@
 package day_25
 
 import (
-	"adventofcode_2017/testutil"
 	"testing"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2017/testutil"
 )
 
 /*

@@ -1,11 +1,12 @@
 package day_16
 
 import (
-	"adventofcode_2018/errutil"
 	"bytes"
 	"fmt"
 	"sort"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2018/errutil"
 
 	"github.com/mazzegi/scan"
 	"github.com/mazzegi/slices"
@@ -31,7 +32,6 @@ func Part2() {
 	log("part2: result = %d", res)
 }
 
-//
 type Sample struct {
 	Before      []int
 	Instruction []int

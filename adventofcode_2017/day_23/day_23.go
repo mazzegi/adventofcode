@@ -1,12 +1,13 @@
 package day_23
 
 import (
-	"adventofcode_2017/errutil"
-	"adventofcode_2017/readutil"
 	"fmt"
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2017/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2017/readutil"
 )
 
 func log(pattern string, args ...interface{}) {
@@ -29,7 +30,7 @@ func Part2() {
 	log("part2: result = %d", res)
 }
 
-////
+// //
 const (
 	set = "set"
 	sub = "sub"
@@ -110,7 +111,6 @@ func mustParseInstructions(in string) []instruction {
 	return iss
 }
 
-//
 type regs map[string]int
 
 func (r regs) value(reg string) int {

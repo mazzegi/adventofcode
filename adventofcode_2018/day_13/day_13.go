@@ -1,10 +1,11 @@
 package day_13
 
 import (
-	"adventofcode_2018/errutil"
-	"adventofcode_2018/readutil"
 	"fmt"
 	"sort"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2018/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2018/readutil"
 )
 
 func log(pattern string, args ...interface{}) {
@@ -109,7 +110,6 @@ func (cs cars) collision() (pos, bool) {
 	return pos{}, false
 }
 
-//
 type row []rune
 
 type track struct {

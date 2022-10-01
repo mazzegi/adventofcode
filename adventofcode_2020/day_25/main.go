@@ -1,9 +1,10 @@
 package main
 
 import (
-	"adventofcode_2020/pki"
 	"fmt"
 	"time"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2020/pki"
 )
 
 func main() {

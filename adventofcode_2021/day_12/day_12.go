@@ -1,12 +1,13 @@
 package day_12
 
 import (
-	"adventofcode_2021/errutil"
-	"adventofcode_2021/readutil"
-	"adventofcode_2021/stringutil"
 	"fmt"
 	"strings"
 	"unicode"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2021/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2021/readutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2021/stringutil"
 
 	"github.com/pkg/errors"
 )
@@ -55,7 +56,6 @@ func parseConnections(in string) ([]*connection, error) {
 	return cs, nil
 }
 
-//
 func isSmall(id string) bool {
 	return unicode.IsLower(rune(id[0]))
 }

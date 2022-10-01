@@ -1,14 +1,15 @@
 package main
 
 import (
-	"adventofcode_2020/ints"
-	"adventofcode_2020/jolt"
 	"bufio"
 	"bytes"
 	"fmt"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2020/ints"
+	"github.com/mazzegi/adventofcode/adventofcode_2020/jolt"
 )
 
 func main() {

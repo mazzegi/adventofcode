@@ -1,11 +1,12 @@
 package main
 
 import (
-	"adventofcode_2021/errutil"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2021/errutil"
 
 	"github.com/pkg/errors"
 )
@@ -51,7 +52,7 @@ func main() {
 var mainTpl = `
 package main
 
-import "adventofcode_2021/{name}"
+import "github.com/mazzegi/adventofcode/adventofcode_2021/{name}"
 
 func main() {
 	{name}.Part1()
@@ -64,7 +65,7 @@ package {name}
 
 import (
 	"fmt"	
-	"adventofcode_2021/errutil"	
+	"github.com/mazzegi/adventofcode/adventofcode_2021/errutil"	
 )
 
 func log(pattern string, args ...interface{}) {
@@ -97,7 +98,7 @@ package {name}
 
 import (	
 	"testing"
-	"adventofcode_2021/testutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2021/testutil"
 )
 
 const inputTest = ""

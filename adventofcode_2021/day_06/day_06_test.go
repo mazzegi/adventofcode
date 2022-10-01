@@ -1,8 +1,9 @@
 package day_06
 
 import (
-	"adventofcode_2021/testutil"
 	"testing"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2021/testutil"
 )
 
 func TestFishCount(t *testing.T) {

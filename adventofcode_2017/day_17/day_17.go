@@ -1,8 +1,9 @@
 package day_17
 
 import (
-	"adventofcode_2017/errutil"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2017/errutil"
 )
 
 func log(pattern string, args ...interface{}) {
@@ -27,7 +28,6 @@ func Part2() {
 	log("part2: result = %d", res)
 }
 
-//
 type node struct {
 	value int
 	next  *node

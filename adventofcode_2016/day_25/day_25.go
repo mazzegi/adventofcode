@@ -1,9 +1,10 @@
 package day_25
 
 import (
-	"adventofcode_2016/assembunny"
-	"adventofcode_2016/errutil"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2016/assembunny"
+	"github.com/mazzegi/adventofcode/adventofcode_2016/errutil"
 )
 
 var registers = []string{"a", "b", "c", "d"}

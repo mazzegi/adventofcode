@@ -1,10 +1,11 @@
 package main
 
 import (
-	"adventofcode_2018/tree"
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2018/tree"
 )
 
 func main() {

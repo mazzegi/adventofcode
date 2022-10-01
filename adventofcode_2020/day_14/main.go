@@ -1,9 +1,10 @@
 package main
 
 import (
-	"adventofcode_2020/bitmask"
 	"bytes"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2020/bitmask"
 )
 
 func main() {

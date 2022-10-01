@@ -1,10 +1,11 @@
 package day_11
 
 import (
-	"adventofcode_2017/errutil"
-	"adventofcode_2017/intutil"
 	"fmt"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2017/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2017/intutil"
 
 	"github.com/pkg/errors"
 )
@@ -36,7 +37,6 @@ const (
 	northWest direction = "nw"
 )
 
-//
 type hexPoint struct {
 	x, y int
 }

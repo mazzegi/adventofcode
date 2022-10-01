@@ -1,9 +1,10 @@
 package assembunny
 
 import (
-	"adventofcode_2016/readutil"
 	"fmt"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2016/readutil"
 
 	"github.com/pkg/errors"
 )

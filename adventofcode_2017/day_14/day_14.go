@@ -1,11 +1,12 @@
 package day_14
 
 import (
-	"adventofcode_2017/day_10/knot"
-	"adventofcode_2017/errutil"
 	"fmt"
 	"math/bits"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2017/day_10/knot"
+	"github.com/mazzegi/adventofcode/adventofcode_2017/errutil"
 
 	"github.com/pkg/errors"
 )

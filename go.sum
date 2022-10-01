@@ -1,5 +1,10 @@
+github.com/mazzegi/scan v0.0.0-20220225221038-5e5015170b15 h1:fYzNDM/8OY21lpHu/cLOSEh23moo0Zys8PIgc65tMzQ=
+github.com/mazzegi/scan v0.0.0-20220225221038-5e5015170b15/go.mod h1:w2iX39IPfRmNCWOJktd7bxi1UkbIGvPZpevfhKa4ev8=
+github.com/mazzegi/slices v0.0.0-20220225112424-2c373b35babc h1:1Fyu5i5BwdxAjxlIQllME/Fps5YMrWsB9lkn21wz0RE=
+github.com/mazzegi/slices v0.0.0-20220225112424-2c373b35babc/go.mod h1:MNr09Z+myotPgFFlqOrr/N32bhzTNuqL5JxtBqTRk9s=
 github.com/mazzegi/wasa v0.0.0-20200809205254-57186e44f6cc h1:dLT7OzGqYEPPPi94HFh/u3H85zo4Ms8vKb8IGr1ufH0=
 github.com/mazzegi/wasa v0.0.0-20200809205254-57186e44f6cc/go.mod h1:CfZNgQZqw4Wo/vK7ob+g/rRU/dc/yVSoU3Dw06xDpD0=
+github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/net v0.0.0-20200320220750-118fecf932d8/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=

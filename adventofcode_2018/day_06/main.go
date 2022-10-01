@@ -1,8 +1,9 @@
 package main
 
 import (
-	"adventofcode_2018/coord"
 	"bytes"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2018/coord"
 )
 
 func main() {

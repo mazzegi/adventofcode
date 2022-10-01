@@ -1,8 +1,9 @@
 package main
 
 import (
-	"adventofcode_2015/numbers"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2015/numbers"
 )
 
 func main() {

@@ -1,11 +1,12 @@
 package main
 
 import (
-	"adventofcode_2020/conway4"
 	"bufio"
 	"bytes"
 	"fmt"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2020/conway4"
 )
 
 func main() {

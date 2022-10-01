@@ -1,8 +1,9 @@
 package day_03
 
 import (
-	"adventofcode_2017/intutil"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2017/intutil"
 )
 
 func Part1() {

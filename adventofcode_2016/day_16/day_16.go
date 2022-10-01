@@ -1,8 +1,9 @@
 package day_16
 
 import (
-	"adventofcode_2016/errutil"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2016/errutil"
 )
 
 func log(pattern string, args ...interface{}) {
@@ -25,7 +26,6 @@ func Part2() {
 	log("part2: result = %q", res)
 }
 
-//
 func clone(bs []byte) []byte {
 	cbs := make([]byte, len(bs))
 	copy(cbs, bs)

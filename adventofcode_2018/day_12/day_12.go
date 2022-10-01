@@ -1,9 +1,10 @@
 package day_12
 
 import (
-	"adventofcode_2018/errutil"
 	"bytes"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2018/errutil"
 
 	"github.com/mazzegi/scan"
 	"github.com/pkg/errors"

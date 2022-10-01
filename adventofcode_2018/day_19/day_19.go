@@ -1,10 +1,11 @@
 package day_19
 
 import (
-	"adventofcode_2018/errutil"
-	"adventofcode_2018/readutil"
 	"fmt"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2018/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2018/readutil"
 
 	"github.com/mazzegi/slices"
 	"github.com/pkg/errors"

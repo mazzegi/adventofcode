@@ -1,10 +1,11 @@
 package day_04
 
 import (
-	"adventofcode_2017/readutil"
 	"fmt"
 	"sort"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2017/readutil"
 )
 
 func Part1() {

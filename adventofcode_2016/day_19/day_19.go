@@ -1,9 +1,10 @@
 package day_19
 
 import (
-	"adventofcode_2016/errutil"
 	"fmt"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2016/errutil"
 )
 
 func log(pattern string, args ...interface{}) {
@@ -26,7 +27,6 @@ func Part2() {
 	log("part2: result = %d", res)
 }
 
-//
 type circBufferElt struct {
 	value         int
 	next          *circBufferElt

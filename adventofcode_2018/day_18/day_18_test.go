@@ -1,8 +1,9 @@
 package day_18
 
 import (
-	"adventofcode_2018/testutil"
 	"testing"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2018/testutil"
 )
 
 const inputTest = `

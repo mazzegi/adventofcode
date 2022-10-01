@@ -1,11 +1,12 @@
 package day_20
 
 import (
-	"adventofcode_2016/errutil"
-	"adventofcode_2016/intutil"
-	"adventofcode_2016/readutil"
 	"fmt"
 	"sort"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2016/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2016/intutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2016/readutil"
 
 	"github.com/pkg/errors"
 )

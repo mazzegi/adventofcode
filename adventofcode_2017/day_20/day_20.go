@@ -1,11 +1,12 @@
 package day_20
 
 import (
-	"adventofcode_2017/errutil"
-	"adventofcode_2017/intutil"
-	"adventofcode_2017/readutil"
 	"fmt"
 	"sort"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2017/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2017/intutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2017/readutil"
 )
 
 func log(pattern string, args ...interface{}) {
@@ -35,7 +36,6 @@ func Part2() {
 	log("part2: result = %d", res)
 }
 
-//
 type vector struct {
 	x, y, z int
 }
@@ -78,7 +78,7 @@ func (p *particle) step() {
 	p.pos.z += p.vel.z
 }
 
-//p=<-1476,-1593,124>, v=<96,-58,141>, a=<-3,8,-10>
+// p=<-1476,-1593,124>, v=<96,-58,141>, a=<-3,8,-10>
 func mustParseParticle(s string) *particle {
 	p := particle{}
 	_, err := fmt.Sscanf(s, "p=<%d,%d,%d>, v=<%d,%d,%d>, a=<%d,%d,%d>",

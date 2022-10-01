@@ -1,10 +1,11 @@
 package day_14
 
 import (
-	"adventofcode_2018/errutil"
 	"fmt"
 	"math"
 	"reflect"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2018/errutil"
 )
 
 func log(pattern string, args ...interface{}) {

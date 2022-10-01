@@ -1,10 +1,11 @@
 package day_21
 
 import (
-	"adventofcode_2017/errutil"
-	"adventofcode_2017/readutil"
 	"fmt"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2017/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2017/readutil"
 )
 
 func log(pattern string, args ...interface{}) {
@@ -27,7 +28,6 @@ func Part2() {
 	log("part1: result = %d", res)
 }
 
-//
 type sub struct {
 	pixels [][]bool
 }

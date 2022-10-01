@@ -1,12 +1,13 @@
 package main
 
 import (
-	"adventofcode_2019/fuel"
 	"bufio"
 	"bytes"
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2019/fuel"
 )
 
 func main() {

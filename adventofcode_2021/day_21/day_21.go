@@ -1,9 +1,10 @@
 package day_21
 
 import (
-	"adventofcode_2021/errutil"
-	"adventofcode_2021/intutil"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2021/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2021/intutil"
 )
 
 func log(pattern string, args ...interface{}) {
@@ -43,7 +44,6 @@ func (d *detDice) roll() int {
 	return d.next
 }
 
-//
 type player struct {
 	pos   int
 	score int

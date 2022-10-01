@@ -1,10 +1,11 @@
 package day_22
 
 import (
-	"adventofcode_2016/errutil"
-	"adventofcode_2016/readutil"
 	"fmt"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2016/errutil"
+	"github.com/mazzegi/adventofcode/adventofcode_2016/readutil"
 
 	"github.com/pkg/errors"
 )
@@ -48,7 +49,7 @@ func (n *Node) is(on *Node) bool {
 	return n.pt == on.pt
 }
 
-///dev/grid/node-x1-y16    87T   70T    17T   80%
+// /dev/grid/node-x1-y16    87T   70T    17T   80%
 func ParseNode(s string) (*Node, error) {
 	sl := strings.Fields(s)
 	if len(sl) != 5 {
@@ -336,7 +337,6 @@ func (ng *NodeGrid) MustNode(pt point) *Node {
 // 	return minGrid, minSteps, ok
 // }
 
-//
 type state string
 
 const (

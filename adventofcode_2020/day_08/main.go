@@ -45,10 +45,11 @@ Run your copy of the boot code. Immediately before any instruction is executed a
 package main
 
 import (
-	"adventofcode_2020/instruction"
 	"bytes"
 	"fmt"
 	"os"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2020/instruction"
 )
 
 func main() {

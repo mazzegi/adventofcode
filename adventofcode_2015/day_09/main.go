@@ -1,11 +1,12 @@
 package main
 
 import (
-	"adventofcode_2015/dinner"
 	"bufio"
 	"bytes"
 	"fmt"
 	"strings"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2015/dinner"
 )
 
 func main() {

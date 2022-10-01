@@ -1,8 +1,9 @@
 package day_20
 
 import (
-	"adventofcode_2018/errutil"
 	"fmt"
+
+	"github.com/mazzegi/adventofcode/adventofcode_2018/errutil"
 )
 
 func log(pattern string, args ...interface{}) {
@@ -25,7 +26,6 @@ func Part2() {
 	log("part2: result = %d", res)
 }
 
-//
 const (
 	Location rune = 'X'
 	Space    rune = '.'
