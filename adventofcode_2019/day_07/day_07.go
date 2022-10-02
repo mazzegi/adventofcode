@@ -173,8 +173,3 @@ func (a *amp) startWithInput(in int) {
 	a.start()
 	a.inC <- in
 }
-
-func (a *amp) sel() {
-	v := <-a.outC
-	a.nextAmp.inC <- v
-}
