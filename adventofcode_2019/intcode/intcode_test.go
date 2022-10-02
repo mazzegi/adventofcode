@@ -66,7 +66,7 @@ func TestExec2(t *testing.T) {
 		1106, 0, 36, 98, 0, 0, 1002, 21, 125, 20, 4, 20, 1105, 1, 46, 104,
 		999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105, 1, 46, 98, 99}
 
-	_, out, err := Exec2(prg, 45)
+	_, out, err := Exec2(prg, []int{45})
 	testutil.CheckUnexpectedError(t, err)
 	fmt.Println(out)
 }

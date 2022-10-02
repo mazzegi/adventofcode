@@ -28,7 +28,7 @@ func Part2() {
 }
 
 func part1MainFunc(in []int) (int, error) {
-	input := 1
+	input := []int{1}
 	_, out, err := intcode.Exec2(in, input)
 	errutil.ExitOnErr(err)
 	fmt.Println(out)
@@ -37,7 +37,7 @@ func part1MainFunc(in []int) (int, error) {
 }
 
 func part2MainFunc(in []int) (int, error) {
-	input := 5
+	input := []int{5}
 	_, out, err := intcode.Exec2(in, input)
 	errutil.ExitOnErr(err)
 	fmt.Println(out)
