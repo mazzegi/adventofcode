@@ -5,15 +5,16 @@ import (
 )
 
 const (
-	Add        int = 1
-	Mult       int = 2
-	Input      int = 3
-	Output     int = 4
-	JmpIfTrue  int = 5
-	JmpIfFalse int = 6
-	Less       int = 7
-	Equal      int = 8
-	Halt       int = 99
+	Add           int = 1
+	Mult          int = 2
+	Input         int = 3
+	Output        int = 4
+	JmpIfTrue     int = 5
+	JmpIfFalse    int = 6
+	Less          int = 7
+	Equal         int = 8
+	RelBaseOffset int = 9
+	Halt          int = 99
 )
 
 func Exec(in []int) ([]int, error) {
