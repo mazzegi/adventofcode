@@ -9,7 +9,7 @@ import (
 var inputTest = []int{}
 
 func TestPart1MainFunc(t *testing.T) {
-	res, err := part1MainFunc(inputTest)
+	res, err := part1MainFunc(inputTest, 1)
 	testutil.CheckUnexpectedError(t, err)
 	var exp int = -42
 	if exp != res {
@@ -18,7 +18,7 @@ func TestPart1MainFunc(t *testing.T) {
 }
 
 func TestPart2MainFunc(t *testing.T) {
-	res, err := part2MainFunc(inputTest)
+	res, err := part2MainFunc(inputTest, 1)
 	testutil.CheckUnexpectedError(t, err)
 	var exp int = -42
 	if exp != res {

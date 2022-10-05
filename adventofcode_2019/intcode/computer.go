@@ -80,16 +80,16 @@ const (
 func (com *Computer) Exec() error {
 	var relativeBase int = 0
 
-	// address := func(v int, mode int) int {
-	// 	switch mode {
-	// 	case modePosition:
-	// 		return v
-	// 	case modeRelative:
-	// 		return relativeBase + v
-	// 	default:
-	// 		panic("cannot address of immediate")
-	// 	}
-	// }
+	address := func(v int, mode int) int {
+		switch mode {
+		case modePosition:
+			return v
+		case modeRelative:
+			return relativeBase + v
+		default:
+			panic("cannot address of immediate")
+		}
+	}
 
 	value := func(v int, mode int) int {
 		switch mode {
@@ -111,16 +111,12 @@ func (com *Computer) Exec() error {
 	for {
 		oc := com.buffer[pos]
 		code, mode1, mode2, mode3 := squeezeOpcode(oc)
-		if mode3 != modePosition {
-			return errors.Errorf("param-mode-3 is not 0 at pos %d, opcode %d", pos, oc)
-		}
 		switch code {
 		case Halt:
 			return nil
 		case Input:
 			pr := com.readFrom(pos + 1)
-			com.writeTo(pr, com.mustReadInput())
-			//com.writeTo(address(pr, mode1), com.mustReadInput())
+			com.writeTo(address(pr, mode1), com.mustReadInput())
 			pos += 2
 		case Output:
 			pr := com.readFrom(pos + 1)
@@ -141,7 +137,7 @@ func (com *Computer) Exec() error {
 				r = 1
 			}
 			pr := com.readFrom(pos + 3)
-			com.writeTo(pr, r)
+			com.writeTo(address(pr, mode3), r)
 			pos += 4
 		case JmpIfTrue:
 			v1, v2 := values(com.readFrom(pos+1), com.readFrom(pos+2), mode1, mode2)

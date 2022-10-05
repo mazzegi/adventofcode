@@ -16,19 +16,19 @@ func fatal(pattern string, args ...interface{}) {
 }
 
 func Part1() {
-	res, err := part1MainFunc(input)
+	res, err := part1MainFunc(input, 1)
 	errutil.ExitOnErr(err)
 	log("part1: result = %d", res)
 }
 
 func Part2() {
-	res, err := part2MainFunc(input)
+	res, err := part2MainFunc(input, 2)
 	errutil.ExitOnErr(err)
 	log("part2: result = %d", res)
 }
 
-func part1MainFunc(prg []int) (int, error) {
-	inr := intcode.NewIntSliceReader([]int{1})
+func part1MainFunc(prg []int, in int) (int, error) {
+	inr := intcode.NewIntSliceReader([]int{in})
 	outw := intcode.NewIntSliceWriter()
 	com := intcode.NewComputer(prg, inr, outw)
 	err := com.Exec()
@@ -37,6 +37,12 @@ func part1MainFunc(prg []int) (int, error) {
 	return 0, nil
 }
 
-func part2MainFunc(prg []int) (int, error) {
+func part2MainFunc(prg []int, in int) (int, error) {
+	inr := intcode.NewIntSliceReader([]int{in})
+	outw := intcode.NewIntSliceWriter()
+	com := intcode.NewComputer(prg, inr, outw)
+	err := com.Exec()
+	errutil.ExitOnErr(err)
+	fmt.Println(outw.Values())
 	return 0, nil
 }
