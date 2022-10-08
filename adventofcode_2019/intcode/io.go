@@ -98,3 +98,34 @@ func (w *IntChannelWriter) Write(v int) error {
 	w.C <- v
 	return nil
 }
+
+//
+
+func NewSignallingIntChannelReader(buffer int) *SignallingIntChannelReader {
+	return &SignallingIntChannelReader{
+		C:     make(chan int, buffer),
+		WantC: make(chan bool),
+	}
+}
+
+type SignallingIntChannelReader struct {
+	C     chan int
+	WantC chan bool
+}
+
+func (r *SignallingIntChannelReader) Close() {
+	close(r.C)
+}
+
+func (r *SignallingIntChannelReader) Provide(n int) {
+	r.C <- n
+}
+
+func (r *SignallingIntChannelReader) Read() (int, error) {
+	r.WantC <- true
+	v, ok := <-r.C
+	if !ok {
+		return 0, errors.Errorf("reader is closed")
+	}
+	return v, nil
+}
