@@ -3,6 +3,7 @@ package day_10
 import (
 	"testing"
 
+	"github.com/mazzegi/adventofcode/grid"
 	"github.com/mazzegi/adventofcode/testutil"
 )
 
@@ -79,11 +80,33 @@ func TestPart1MainFunc(t *testing.T) {
 	})
 }
 
+const part2InputTest1 = `
+.#....#####...#..
+##...##.#####..##
+##...#...#.#####.
+..#.....#...###..
+..#.#.....#....##
+`
+
 func TestPart2MainFunc(t *testing.T) {
-	res, err := part2MainFunc(inputTest1)
-	testutil.CheckUnexpectedError(t, err)
-	var exp int = -42
-	if exp != res {
-		t.Fatalf("want %d, have %d", exp, res)
-	}
+	t.Run("test_2_1", func(t *testing.T) {
+		t.Skip()
+		res, err := part2MainFunc(part2InputTest1, grid.Pt(8, 3))
+		testutil.CheckUnexpectedError(t, err)
+		var exp int = -42
+		if exp != res {
+			t.Fatalf("want %d, have %d", exp, res)
+		}
+	})
+
+	t.Run("test_2_1", func(t *testing.T) {
+
+		res, err := part2MainFunc(inputTest3, grid.Pt(11, 13))
+		testutil.CheckUnexpectedError(t, err)
+		var exp int = 802
+		if exp != res {
+			t.Fatalf("want %d, have %d", exp, res)
+		}
+	})
+
 }
