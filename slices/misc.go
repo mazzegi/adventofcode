@@ -28,3 +28,12 @@ func DeleteFirst[T comparable](ts []T, t T) []T {
 	}
 	return Clone(ts)
 }
+
+func Reverse[T any](ts []T) []T {
+	sz := len(ts)
+	rts := make([]T, sz)
+	for i, t := range ts {
+		rts[sz-i-1] = t
+	}
+	return rts
+}
