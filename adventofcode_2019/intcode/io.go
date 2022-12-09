@@ -1,6 +1,8 @@
 package intcode
 
 import (
+	"sync"
+
 	"github.com/mazzegi/adventofcode/slices"
 	"github.com/pkg/errors"
 )
@@ -128,4 +130,67 @@ func (r *SignallingIntChannelReader) Read() (int, error) {
 		return 0, errors.Errorf("reader is closed")
 	}
 	return v, nil
+}
+
+//
+
+func NewNonBlockingIntChannelReader(emptyValue int) *NonBlockingIntChannelReader {
+	return &NonBlockingIntChannelReader{
+		emptyValue: emptyValue,
+	}
+}
+
+type NonBlockingIntChannelReader struct {
+	sync.RWMutex
+	values     []int
+	emptyValue int
+}
+
+func (r *NonBlockingIntChannelReader) Close() {
+}
+
+func (r *NonBlockingIntChannelReader) Provide(ns ...int) {
+	r.Lock()
+	defer r.Unlock()
+	r.values = append(r.values, ns...)
+}
+
+func (r *NonBlockingIntChannelReader) Read() (int, error) {
+	r.Lock()
+	defer r.Unlock()
+	if len(r.values) == 0 {
+		return r.emptyValue, nil
+	}
+	n := r.values[0]
+	r.values = r.values[1:]
+	return n, nil
+}
+
+//
+
+func NewNonBlockingIntChannelWriter() *NonBlockingIntChannelWriter {
+	return &NonBlockingIntChannelWriter{}
+}
+
+type NonBlockingIntChannelWriter struct {
+	sync.RWMutex
+	values []int
+}
+
+func (r *NonBlockingIntChannelWriter) Write(v int) error {
+	r.Lock()
+	defer r.Unlock()
+	r.values = append(r.values, v)
+	return nil
+}
+
+func (r *NonBlockingIntChannelWriter) Read(cnt int) ([]int, bool) {
+	r.Lock()
+	defer r.Unlock()
+	if len(r.values) < cnt {
+		return nil, false
+	}
+	ns := r.values[:cnt]
+	r.values = r.values[cnt:]
+	return ns, true
 }
