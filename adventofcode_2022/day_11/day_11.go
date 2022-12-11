@@ -26,10 +26,13 @@ func Part1() {
 }
 
 func Part2() {
-	pf, _ := os.Create("profile")
-	defer pf.Close()
-	pprof.StartCPUProfile(pf)
-	defer pprof.StopCPUProfile()
+	createProfile := false
+	if createProfile {
+		pf, _ := os.Create("profile")
+		defer pf.Close()
+		pprof.StartCPUProfile(pf)
+		defer pprof.StopCPUProfile()
+	}
 
 	res, err := part2MainFunc(inputBig)
 	errutil.ExitOnErr(err)
@@ -54,9 +57,18 @@ type BigMonkey struct {
 	ThrowToIfTrue  int
 	ThrowToIfFalse int
 	Activity       int
+	cache          *cache
 }
 
-func dump(ms []*Monkey) string {
+func dumpActivity(ms []*BigMonkey) string {
+	var sl []string
+	for _, m := range ms {
+		sl = append(sl, fmt.Sprintf("Monkey %d: %d", m.ID, m.Activity))
+	}
+	return strings.Join(sl, "\n")
+}
+
+func dumpItems(ms []*BigMonkey) string {
 	var sl []string
 	for _, m := range ms {
 		sl = append(sl, fmt.Sprintf("Monkey %d: %v", m.ID, m.Items))
@@ -87,14 +99,50 @@ func part1MainFunc(monkeys []*Monkey) (int, error) {
 	return monkeys[0].Activity * monkeys[1].Activity, nil
 }
 
+type cache struct {
+	ops   map[string]*big.Int
+	tests map[string]bool
+}
+
+func newCache() *cache {
+	return &cache{
+		ops:   map[string]*big.Int{},
+		tests: map[string]bool{},
+	}
+}
+
+// func (c *cache) findOp(n *big.Int) (*big.Int, bool) {
+// 	if v, ok := c.ops[n.String()]; ok {
+// 		return bigClone(v), true
+// 	}
+// 	return nil, false
+// }
+
+// func (c *cache) addOp(n *big.Int) {
+// 	c.ops[n.String()] = bigClone(n)
+// }
+
+// func (c *cache) findTest(n *big.Int) (bool, bool) {
+// 	if v, ok := c.tests[n.String()]; ok {
+// 		return v, true
+// 	}
+// 	return false, false
+// }
+
+// func (c *cache) addTest(n *big.Int, v bool) {
+// 	c.tests[n.String()] = v
+// }
+
 func part2MainFunc(monkeys []*BigMonkey) (int, error) {
-	//rounds := 10000
-	rounds := 800
+	rounds := 10000
+	//rounds := 800
 	for r := 0; r < rounds; r++ {
 		for _, mon := range monkeys {
 			for _, item := range mon.Items {
 				wl := mon.Operation(item)
-				if mon.Test(wl) {
+				tres := mon.Test(wl)
+
+				if tres {
 					monkeys[mon.ThrowToIfTrue].Items = append(monkeys[mon.ThrowToIfTrue].Items, wl)
 				} else {
 					monkeys[mon.ThrowToIfFalse].Items = append(monkeys[mon.ThrowToIfFalse].Items, wl)
@@ -103,6 +151,7 @@ func part2MainFunc(monkeys []*BigMonkey) (int, error) {
 			}
 			mon.Items = []*big.Int{}
 		}
+		log("\nafter round %d\n%s", r, dumpItems(monkeys))
 	}
 	sort.Slice(monkeys, func(i, j int) bool {
 		return monkeys[i].Activity > monkeys[j].Activity

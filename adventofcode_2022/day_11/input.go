@@ -77,6 +77,27 @@ var input = []*Monkey{
 	},
 }
 
+// func bigMulN(x *big.Int, n int) *big.Int {
+// 	y := big.NewInt(0).Set(x)
+// 	if n <= 0 {
+// 		return y
+// 	}
+// 	for i := 0; i < n-1; i++ {
+// 		y.Add(y, x)
+// 	}
+// 	return y
+// }
+
+// func bigSqrN(x *big.Int) *big.Int {
+// 	return big.NewInt(0).Exp(x, big.NewInt(2), nil)
+// }
+
+// func bigClone(x *big.Int) *big.Int {
+// 	cx := big.NewInt(0)
+// 	cx.Set(x)
+// 	return cx
+// }
+
 var inputBig = []*BigMonkey{
 	{
 		ID:             0,
@@ -86,6 +107,7 @@ var inputBig = []*BigMonkey{
 		ThrowToIfTrue:  2,
 		ThrowToIfFalse: 3,
 		Activity:       0,
+		cache:          newCache(),
 	},
 	{
 		ID:             1,
@@ -95,6 +117,7 @@ var inputBig = []*BigMonkey{
 		ThrowToIfTrue:  2,
 		ThrowToIfFalse: 0,
 		Activity:       0,
+		cache:          newCache(),
 	},
 	{
 		ID:             2,
@@ -104,6 +127,7 @@ var inputBig = []*BigMonkey{
 		ThrowToIfTrue:  1,
 		ThrowToIfFalse: 3,
 		Activity:       0,
+		cache:          newCache(),
 	},
 	{
 		ID:             3,
@@ -113,5 +137,6 @@ var inputBig = []*BigMonkey{
 		ThrowToIfTrue:  0,
 		ThrowToIfFalse: 1,
 		Activity:       0,
+		cache:          newCache(),
 	},
 }
