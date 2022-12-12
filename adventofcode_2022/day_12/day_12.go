@@ -72,6 +72,15 @@ func (g *Grid) Equal(t1, t2 grid.Point) bool {
 
 func (g *Grid) AreNeighbours(t1, t2 grid.Point) bool {
 	return t1.ManhattenDistTo(t2) == 1
+	// if t1.ManhattenDistTo(t2) != 1 {
+	// 	return false
+	// }
+	// e1 := g.Rows[t1.Y].Cols[t1.X]
+	// e2 := g.Rows[t2.Y].Cols[t2.X]
+	// if e1+1 >= e2 {
+	// 	return true
+	// }
+	// return false
 }
 
 func (g *Grid) DistanceBetween(t1, t2 grid.Point) float64 {
@@ -80,11 +89,6 @@ func (g *Grid) DistanceBetween(t1, t2 grid.Point) float64 {
 	if e1+1 >= e2 {
 		return float64(t1.ManhattenDistTo(t2))
 	}
-
-	// var add int
-	// if mathutil.Abs(e1-e2) > 1 {
-	// 	add = 100000000
-	// }
 	return float64(t1.ManhattenDistTo(t2)) + 10000000
 }
 
@@ -123,18 +127,58 @@ func mustParse(in string) *Grid {
 
 func part1MainFunc(in string) (int, error) {
 	g := mustParse(in)
-
 	path, err := dijkstra.ShortestPath[grid.Point](g, g.Start, g.End)
 	if err != nil {
 		fatal(err.Error())
 	}
-	dumpGrid(g, path.Nodes)
-
+	//dumpGrid(g, path.Nodes)
 	return len(path.Nodes) - 1, nil
 }
 
+func validPath(g *Grid, path []grid.Point) bool {
+	for i := 0; i < len(path)-1; i++ {
+		pc := path[i]
+		pn := path[i+1]
+		ec := g.Rows[pc.Y].Cols[pc.X]
+		en := g.Rows[pn.Y].Cols[pn.X]
+		if en > ec+1 {
+			return false
+		}
+	}
+	return true
+}
+
 func part2MainFunc(in string) (int, error) {
-	return 0, nil
+	g := mustParse(in)
+	//collect 'a's
+	as := []grid.Point{}
+	for ir, row := range g.Rows {
+		for ic, col := range row.Cols {
+			if col == 0 {
+				as = append(as, grid.Pt(ic, ir))
+			}
+		}
+	}
+
+	log("find shortest of %d", len(as))
+	var shortest int
+	for i, a := range as {
+		path, err := dijkstra.ShortestPath[grid.Point](g, a, g.End)
+		if err != nil {
+			fatal(err.Error())
+		}
+		if !validPath(g, path.Nodes) {
+			log("%d: -> invalid", i)
+			continue
+		}
+
+		steps := len(path.Nodes) - 1
+		if i == 0 || steps < shortest {
+			shortest = steps
+		}
+		log("%d: -> %d", i, steps)
+	}
+	return shortest, nil
 }
 
 func dumpGrid(g *Grid, path []grid.Point) {

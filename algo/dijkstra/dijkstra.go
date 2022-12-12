@@ -82,9 +82,6 @@ func ShortestPath[T any](graph Graph[T], start T, target T) (*Path[T], error) {
 			break
 		}
 		ns := neighbours(dn)
-		if len(ns) == 0 {
-			fmt.Printf("halt! (%f)\n", dn.dist)
-		}
 		for _, dnn := range ns {
 			candDist := dn.dist + graph.DistanceBetween(dn.value, dnn.value)
 			if candDist < dnn.dist {
