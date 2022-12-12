@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/mazzegi/algo/dijkstra"
-	. "github.com/mazzegi/algo/grid2d"
+	"github.com/mazzegi/adventofcode/algo/dijkstra"
+	. "github.com/mazzegi/adventofcode/algo/grid2d"
 )
 
 const maze = `

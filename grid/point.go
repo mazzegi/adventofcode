@@ -5,6 +5,7 @@ import (
 	"math"
 
 	"github.com/mazzegi/adventofcode/intutil"
+	"github.com/mazzegi/adventofcode/mathutil"
 	"github.com/mazzegi/adventofcode/vector"
 )
 
@@ -42,6 +43,14 @@ func (p Point) Norm() float64 {
 
 func (p Point) DistTo(q Point) float64 {
 	return p.Sub(q).Norm()
+}
+
+func (p Point) ManhattenNorm() int {
+	return mathutil.Abs(p.X) + mathutil.Abs(p.Y)
+}
+
+func (p Point) ManhattenDistTo(q Point) int {
+	return p.Sub(q).ManhattenNorm()
 }
 
 func (p Point) RightAngleTo(q Point) float64 {
