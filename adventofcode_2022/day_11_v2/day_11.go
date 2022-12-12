@@ -2,7 +2,6 @@ package day_11_v2
 
 import (
 	"fmt"
-	"math/big"
 	"os"
 	"runtime/pprof"
 	"sort"
@@ -39,39 +38,31 @@ func Part2() {
 
 //
 
-func MultBy(n int) func(x *big.Int) *big.Int {
-	return func(x *big.Int) *big.Int {
-		return big.NewInt(0).Mul(x, big.NewInt(int64(n)))
+func MultBy(n int64) func(x int64) int64 {
+	return func(x int64) int64 {
+		return x * n
 	}
 }
 
-func Add(n int) func(x *big.Int) *big.Int {
-	return func(x *big.Int) *big.Int {
-		return big.NewInt(0).Add(x, big.NewInt(int64(n)))
+func Add(n int64) func(x int64) int64 {
+	return func(x int64) int64 {
+		return x + n
 	}
 }
 
-func Square(x *big.Int) *big.Int {
-	return big.NewInt(0).Mul(x, x)
-	//return big.NewInt(0).Mul(x, big.NewInt(2))
-	//return Clone(x)
+func Square(x int64) int64 {
+	return x * x
 }
 
-func Clone(x *big.Int) *big.Int {
-	c := big.NewInt(0)
-	c.Set(x)
-	return c
-}
-
-func TestDivBy(n int) func(x *big.Int) bool {
-	return func(x *big.Int) bool {
-		return big.NewInt(0).Mod(x, big.NewInt(int64(n))).Int64() == 0
+func TestDivBy(n int64) func(x int64) bool {
+	return func(x int64) bool {
+		return x%n == 0
 	}
 }
 
 type InputMonkey struct {
 	Items          []int
-	Operation      func(*big.Int) *big.Int
+	Operation      func(int64) int64
 	TestDivBy      int
 	ThrowToIfTrue  int
 	ThrowToIfFalse int
@@ -79,7 +70,7 @@ type InputMonkey struct {
 
 type Item struct {
 	ID       string
-	Value    *big.Int
+	Value    int64
 	AtMonkey int
 	History  []int
 }
@@ -87,8 +78,8 @@ type Item struct {
 type Monkey struct {
 	ID             int
 	Items          []*Item
-	Operation      func(*big.Int) *big.Int
-	Test           func(*big.Int) bool
+	Operation      func(int64) int64
+	Test           func(int64) bool
 	TestDivBy      int
 	ThrowToIfTrue  int
 	ThrowToIfFalse int
@@ -134,12 +125,12 @@ func dumpItems(ms []*Monkey) string {
 func part2MainFunc(in []InputMonkey) (int, error) {
 	//Setup monkeys
 	monkeys := []*Monkey{}
-	var pMod int = 1
+	var pMod int64 = 1
 	for mid, im := range in {
 		m := &Monkey{
 			ID:             mid,
 			Operation:      im.Operation,
-			Test:           TestDivBy(im.TestDivBy),
+			Test:           TestDivBy(int64(im.TestDivBy)),
 			TestDivBy:      im.TestDivBy,
 			ThrowToIfTrue:  im.ThrowToIfTrue,
 			ThrowToIfFalse: im.ThrowToIfFalse,
@@ -148,12 +139,12 @@ func part2MainFunc(in []InputMonkey) (int, error) {
 		for iid, iv := range im.Items {
 			m.Items = append(m.Items, &Item{
 				ID:       fmt.Sprintf("m%d:%d", mid, iid),
-				Value:    big.NewInt(int64(iv)),
+				Value:    int64(iv),
 				AtMonkey: mid,
 				History:  []int{mid},
 			})
 		}
-		pMod *= im.TestDivBy
+		pMod *= int64(im.TestDivBy)
 		monkeys = append(monkeys, m)
 	}
 
@@ -162,12 +153,12 @@ func part2MainFunc(in []InputMonkey) (int, error) {
 	for r := 0; r < rounds; r++ {
 		for _, mon := range monkeys {
 			for _, item := range mon.Items {
+
 				item.Value = mon.Operation(item.Value)
+				item.Value = item.Value % pMod
 
-				item.Value = big.NewInt(0).Mod(item.Value, big.NewInt(int64(pMod)))
-
-				//tres := mon.Test(item.Value)
-				tres := item.Value.Int64() == 0
+				tres := mon.Test(item.Value)
+				//tres := item.Value.Int64() == 0
 
 				var moveTo int
 				if tres {
