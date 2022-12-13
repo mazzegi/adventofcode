@@ -2,6 +2,8 @@ package day_13
 
 import (
 	"fmt"
+	"reflect"
+	"sort"
 	"strings"
 
 	"github.com/mazzegi/adventofcode/errutil"
@@ -61,58 +63,82 @@ func checkInput(arr []any, in string) {
 
 ////
 
-func inRightOrderLeftInt(v1 int, v2 any) bool {
+type cmpResult int
+
+const (
+	ls cmpResult = -1
+	eq cmpResult = 0
+	gt cmpResult = 1
+)
+
+func cmpInts(n1, n2 int) cmpResult {
+	switch {
+	case n1 < n2:
+		return ls
+	case n1 > n2:
+		return gt
+	default:
+		return eq
+	}
+}
+
+func compareLeftInt(v1 int, v2 any) cmpResult {
 	switch v2 := v2.(type) {
 	case int:
-		return v1 <= v2
+		return cmpInts(v1, v2)
 	case []any:
-		return inRightOrderArrays([]any{v1}, v2)
+		return compareArrays([]any{v1}, v2)
 	default:
 		fatal("invalid type %T", v1)
 	}
-	return false
+	return 0
 }
 
-func inRightOrderArrays(v1 []any, v2 []any) bool {
+func compareArrays(v1 []any, v2 []any) cmpResult {
 	min := mathutil.Min(len(v1), len(v2))
 	for i := 0; i < min; i++ {
 		e1 := v1[i]
 		e2 := v2[i]
-		if !inRightOrder(e1, e2) {
-			return false
+		res := compare(e1, e2)
+		switch res {
+		case ls:
+			return ls
+		case gt:
+			return gt
+		default: // eq
+			continue
 		}
 	}
 	if len(v1) < len(v2) {
-		return true
+		return ls
 	} else if len(v1) > len(v2) {
-		return false
+		return gt
 	}
-	return true
+	return eq
 }
 
-func inRightOrderLeftArr(v1 []any, v2 any) bool {
+func compareLeftArr(v1 []any, v2 any) cmpResult {
 	switch v2 := v2.(type) {
 	case []any:
-		return inRightOrderArrays(v1, v2)
+		return compareArrays(v1, v2)
 	case int:
-		return inRightOrderArrays(v1, []any{v2})
+		return compareArrays(v1, []any{v2})
 	default:
 		fatal("invalid type %T", v1)
 	}
-	return false
+	return 0
 }
 
-func inRightOrder(v1 any, v2 any) bool {
+func compare(v1 any, v2 any) cmpResult {
 	switch v1 := v1.(type) {
 	case int:
-		return inRightOrderLeftInt(v1, v2)
+		return compareLeftInt(v1, v2)
 	case []any:
-		return inRightOrderLeftArr(v1, v2)
+		return compareLeftArr(v1, v2)
 	default:
 		fatal("invalid type %T", v1)
 	}
-
-	return false
+	return 0
 }
 
 func part1MainFunc(in []any, inStr string) (int, error) {
@@ -121,7 +147,7 @@ func part1MainFunc(in []any, inStr string) (int, error) {
 	for i := 0; i < len(in); i += 2 {
 		v1 := in[i]
 		v2 := in[i+1]
-		if inRightOrder(v1, v2) {
+		if compare(v1, v2) == ls {
 			pairIdx := i/2 + 1
 			sum += pairIdx
 			log("%d", pairIdx)
@@ -131,5 +157,22 @@ func part1MainFunc(in []any, inStr string) (int, error) {
 }
 
 func part2MainFunc(in []any) (int, error) {
-	return 0, nil
+	dec1 := []any{[]any{2}}
+	dec2 := []any{[]any{6}}
+	//inject decoder packets
+	in = append(in, dec1, dec2)
+	sort.Slice(in, func(i, j int) bool {
+		return compare(in[i], in[j]) == ls
+	})
+	var ix1 int
+	var ix2 int
+	for i, v := range in {
+		if reflect.DeepEqual(v, dec1) {
+			ix1 = i + 1
+		}
+		if reflect.DeepEqual(v, dec2) {
+			ix2 = i + 1
+		}
+	}
+	return ix1 * ix2, nil
 }
