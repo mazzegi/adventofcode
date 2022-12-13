@@ -5,7 +5,7 @@ import (
 	. "math"
 	"math/rand"
 
-	"github.com/mazzegi/algo/siman"
+	"github.com/mazzegi/adventofcode/algo/siman"
 )
 
 type params [2]float64
