@@ -208,7 +208,7 @@ func part1MainFunc(in string) (int, error) {
 	rest := 0
 	for {
 		r := cave.pour()
-		dumpCave(cave)
+		//dumpCave(cave)
 		if !r {
 			break
 		}
@@ -230,7 +230,7 @@ func part2MainFunc(in string) (int, error) {
 		}
 		rest++
 	}
-	dumpCave(cave)
+	//dumpCave(cave)
 	return rest + 1, nil
 }
 

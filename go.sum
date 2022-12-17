@@ -1,3 +1,5 @@
+github.com/mazzegi/log v0.0.0-20200601101706-01eae2241ec0 h1:ZKp/KWeHGhBP2wkRc+5FHABNG5P1BvjKRwXPf3fhUW4=
+github.com/mazzegi/log v0.0.0-20200601101706-01eae2241ec0/go.mod h1:7OU3AW6kncZPf8f3oJ3H+g0sxeT1R7MYUOrvBAW/P68=
 github.com/mazzegi/scan v0.0.0-20220225221038-5e5015170b15 h1:fYzNDM/8OY21lpHu/cLOSEh23moo0Zys8PIgc65tMzQ=
 github.com/mazzegi/scan v0.0.0-20220225221038-5e5015170b15/go.mod h1:w2iX39IPfRmNCWOJktd7bxi1UkbIGvPZpevfhKa4ev8=
 github.com/mazzegi/slices v0.0.0-20220225112424-2c373b35babc h1:1Fyu5i5BwdxAjxlIQllME/Fps5YMrWsB9lkn21wz0RE=
