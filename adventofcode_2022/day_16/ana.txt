@@ -1,0 +1,5 @@
+
+path C:[] - M(DD), O, M(AA), M(BB), O, M(AA), M(II), M(JJ), O, M(II), M(AA), M(DD), M(EE), M(FF), M(GG), M(HH), O, M(GG), M(FF), M(EE), M(DD), M(CC), O, M(DD), M(EE), O: fn=1314
+
+
+path C:[] - M(DD), O, M(AA), M(BB), O, M(AA), M(II), M(JJ), O, M(II), M(AA), M(DD), M(EE), M(FF), M(GG), M(HH), O, M(GG), M(FF), M(EE), O, M(DD), M(CC), O: fn=1165

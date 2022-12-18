@@ -176,97 +176,131 @@ func part1MainFunc(in string) (int, error) {
 	vs := mustParseValveSet(in)
 	count := 30
 
-	path := &Path{
+	startPath := &Path{
 		closed: set.New[string](),
 	}
 	for _, v := range vs.Valves {
 		if v.FlowRate > 0 {
-			path.closed.Insert(v.ID)
+			startPath.closed.Insert(v.ID)
 		}
 	}
 	curr := vs.Valve("AA")
 	var maxFn int
 
-	var step func(path *Path, valve *Valve, iter int, currFn int) int
-	step = func(path *Path, valve *Valve, iter int, currFn int) int {
-		if len(path.actions) >= count || path.closed.Count() == 0 {
-			fn := vs.Fitness("AA", path)
-			if fn > maxFn {
-				maxFn = fn
-				log("path %v: fn=%d (curr=%d)", path.String(), fn, currFn)
-			}
-			return fn
-		}
-		// iterate actions
-		var maxFn int
-		if valve.FlowRate > 0 && path.closed.Contains(valve.ID) {
-			sub := path.Clone()
-			sub.closed.Remove(valve.ID)
-			sub.actions = append(sub.actions, Open{})
-			newFn := currFn + (count-1-iter)*valve.FlowRate
-			fn := step(sub, valve, iter+1, newFn)
-			if fn > maxFn {
-				maxFn = fn
-			}
-		}
-		for _, tt := range valve.TunnelsTo {
-			sub := path.Clone()
-			sub.actions = append(sub.actions, Move{tt})
-			next := vs.Valve(tt)
-			fn := step(sub, next, iter+1, currFn)
-			if fn > maxFn {
-				maxFn = fn
-			}
-		}
-		return maxFn
+	type route struct {
+		from string
+		to   string
 	}
-	fn := step(path, curr, 0, 0)
+	cache := map[route][]string{}
+	var cacheHits int
 
-	return fn, nil
+	var step func(path *Path, valve *Valve, level int, currFn int)
+	step = func(path *Path, valve *Valve, level int, currFn int) {
+		if len(path.actions) >= count || path.closed.Count() == 0 {
+			for len(path.actions) < count {
+				path.actions = append(path.actions, Rest{})
+			}
+			//fn := vs.Fitness("AA", path)
+			if currFn > maxFn {
+				log("path %v: currfn=%d", path.String(), currFn)
+				maxFn = currFn
+			}
+			return
+		}
+
+		closed := path.closed.Values()
+		sort.Strings(closed)
+		for _, cl := range closed {
+			rt := route{valve.ID, cl}
+			sp, ok := cache[rt]
+			if !ok {
+				sp, _ = vs.ShortestPath(valve.ID, cl)
+				sp = sp[1:]
+				cache[rt] = sp
+			} else {
+				cacheHits++
+			}
+
+			sub := path.Clone()
+			currID := valve.ID
+			for _, s := range sp {
+				sub.actions = append(sub.actions, Move{s})
+				currID = s
+			}
+			sub.actions = append(sub.actions, Open{})
+			curr := vs.Valve(currID)
+			newFn := currFn + (count-len(sub.actions))*curr.FlowRate
+			sub.closed.Remove(currID)
+			step(sub, curr, level+1, newFn)
+		}
+	}
+	step(startPath, curr, 0, 0)
+	log("with %d cache hits", cacheHits)
+	return maxFn, nil
 }
 
 func part2MainFunc(in string) (int, error) {
-	return 0, nil
+	vs := mustParseValveSet(in)
+	count := 26
+
+	startPath := &Path{
+		closed: set.New[string](),
+	}
+	for _, v := range vs.Valves {
+		if v.FlowRate > 0 {
+			startPath.closed.Insert(v.ID)
+		}
+	}
+	curr := vs.Valve("AA")
+	var maxFn int
+
+	type route struct {
+		from string
+		to   string
+	}
+	cache := map[route][]string{}
+	var cacheHits int
+
+	var step func(path *Path, valve *Valve, level int, currFn int)
+	step = func(path *Path, valve *Valve, level int, currFn int) {
+		if len(path.actions) >= count || path.closed.Count() == 0 {
+			for len(path.actions) < count {
+				path.actions = append(path.actions, Rest{})
+			}
+			if currFn > maxFn {
+				log("path %v: currfn=%d", path.String(), currFn)
+				maxFn = currFn
+			}
+			return
+		}
+
+		closed := path.closed.Values()
+		sort.Strings(closed)
+		for _, cl := range closed {
+			rt := route{valve.ID, cl}
+			sp, ok := cache[rt]
+			if !ok {
+				sp, _ = vs.ShortestPath(valve.ID, cl)
+				sp = sp[1:]
+				cache[rt] = sp
+			} else {
+				cacheHits++
+			}
+
+			sub := path.Clone()
+			currID := valve.ID
+			for _, s := range sp {
+				sub.actions = append(sub.actions, Move{s})
+				currID = s
+			}
+			sub.actions = append(sub.actions, Open{})
+			curr := vs.Valve(currID)
+			newFn := currFn + (count-len(sub.actions))*curr.FlowRate
+			sub.closed.Remove(currID)
+			step(sub, curr, level+1, newFn)
+		}
+	}
+	step(startPath, curr, 0, 0)
+	log("with %d cache hits", cacheHits)
+	return maxFn, nil
 }
-
-//
-// func part1MainFunc(in string) (int, error) {
-// 	vs := mustParseValveSet(in)
-
-// 	path := Path{
-// 		Move{"DD"},
-// 		Open{},
-// 		Move{"CC"},
-// 		Move{"BB"},
-// 		Open{},
-// 		Move{"AA"},
-// 		Move{"II"},
-// 		Move{"JJ"},
-// 		Open{},
-// 		Move{"II"},
-// 		Move{"AA"},
-// 		Move{"DD"},
-// 		Move{"EE"},
-// 		Move{"FF"},
-// 		Move{"GG"},
-// 		Move{"HH"},
-// 		Open{},
-// 		Move{"GG"},
-// 		Move{"FF"},
-// 		Move{"EE"},
-// 		Open{},
-// 		Move{"DD"},
-// 		Move{"CC"},
-// 		Open{},
-// 		Rest{},
-// 		Rest{},
-// 		Rest{},
-// 		Rest{},
-// 		Rest{},
-// 		Rest{},
-// 	}
-// 	fn := vs.Fitness("AA", path)
-// 	log("%d", fn)
-
-// 	return 0, nil
-// }
