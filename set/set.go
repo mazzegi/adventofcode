@@ -26,3 +26,19 @@ func (s *Set[T]) Contains(t T) bool {
 func (s *Set[T]) Count() int {
 	return len(s.values)
 }
+
+func (s *Set[T]) Clone() *Set[T] {
+	cs := New[T]()
+	for t := range s.values {
+		cs.Insert(t)
+	}
+	return cs
+}
+
+func (s *Set[T]) Values() []T {
+	var ts []T
+	for t := range s.values {
+		ts = append(ts, t)
+	}
+	return ts
+}

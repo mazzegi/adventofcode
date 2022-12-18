@@ -8,3 +8,7 @@ func Find[T comparable](ts []T, t T) int {
 	}
 	return -1
 }
+
+func Contains[T comparable](ts []T, t T) bool {
+	return Find(ts, t) > -1
+}
