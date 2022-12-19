@@ -36,3 +36,11 @@ func TestPart2MainFunc(t *testing.T) {
 		t.Fatalf("want %d, have %d", exp, res)
 	}
 }
+
+func TestSlicePairs(t *testing.T) {
+	sl := []string{"A", "B", "C", "D"}
+	ps := slicePairs(sl)
+	for _, p := range ps {
+		log("%v + %v", p[0], p[1])
+	}
+}

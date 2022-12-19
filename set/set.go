@@ -1,9 +1,13 @@
 package set
 
-func New[T comparable]() *Set[T] {
-	return &Set[T]{
+func New[T comparable](vs ...T) *Set[T] {
+	s := &Set[T]{
 		values: make(map[T]struct{}),
 	}
+	for _, v := range vs {
+		s.Insert(v)
+	}
+	return s
 }
 
 type Set[T comparable] struct {

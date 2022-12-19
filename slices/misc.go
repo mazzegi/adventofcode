@@ -15,9 +15,14 @@ func Repeat[T any](t T, count int) []T {
 }
 
 func DeleteIdx[T comparable](ts []T, i int) []T {
-	cts := Clone(ts)
-	cts = append(cts[:i], cts[i+1:]...)
-	return cts
+	var dts []T
+	for ix, t := range ts {
+		if ix == i {
+			continue
+		}
+		dts = append(dts, t)
+	}
+	return dts
 }
 
 func DeleteFirst[T comparable](ts []T, t T) []T {
