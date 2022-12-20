@@ -6,6 +6,7 @@ import (
 	"github.com/mazzegi/adventofcode/errutil"
 	"github.com/mazzegi/adventofcode/grid"
 	"github.com/mazzegi/adventofcode/set"
+	"github.com/mazzegi/adventofcode/slices"
 )
 
 func log(pattern string, args ...interface{}) {
@@ -130,13 +131,14 @@ func part1MainFunc(in string) (int, error) {
 				ri := len(rock) - 1 - y
 				for x, r := range rock[ri] {
 					if r == '#' {
-						occ.Insert(grid.Pt(xpos+x, ypos-y))
-						if ypos-y > maxY {
-							maxY = ypos - y
+						occ.Insert(grid.Pt(xpos+x, ypos+y))
+						if ypos+y > maxY {
+							maxY = ypos + y
 						}
 					}
 				}
 			}
+			dump(occ, width)
 			break
 		}
 
@@ -148,4 +150,31 @@ func part1MainFunc(in string) (int, error) {
 
 func part2MainFunc(in string) (int, error) {
 	return 0, nil
+}
+
+func dump(occ *set.Set[grid.Point], width int) {
+	var maxY int
+	for _, p := range occ.Values() {
+		if p.Y > maxY {
+			maxY = p.Y
+		}
+	}
+	var sl []string
+	for y := 0; y <= maxY; y++ {
+		rsl := "|"
+		for x := 0; x < width; x++ {
+			if occ.Contains(grid.Pt(x, y)) {
+				rsl += "#"
+			} else {
+				rsl += "."
+			}
+		}
+		rsl += "|"
+		sl = append(sl, rsl)
+	}
+	sl = slices.Reverse(sl)
+	for _, s := range sl {
+		log(s)
+	}
+	log("+-------+")
 }
