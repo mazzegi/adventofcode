@@ -198,20 +198,22 @@ func part2MainFunc(in string, cnt int) (int, error) {
 		return false
 	}
 
-	type result struct {
+	type frIndex struct {
 		flowIdx int
 		rockIdx int
-		xRest   int
 	}
-	type mark struct {
+	type position struct {
+		maxY int
 		iter int
-		ypos int
 	}
-	results := map[result]mark{}
+	friPositions := map[frIndex][]position{}
 
 	flowIdx := 0
 	rockIdx := 0
 
+	foundPeriod := false
+	var foundMaxY int
+	var addMaxY int
 	for i := 0; i < cnt; i++ {
 		rock := rocks[rockIdx]
 		rockIdx++
@@ -261,33 +263,186 @@ func part2MainFunc(in string, cnt int) (int, error) {
 			dump(occ, width)
 			break
 		}
-		res := result{
+		if foundPeriod {
+			continue
+		}
+		fri := frIndex{
 			flowIdx: flowIdx,
 			rockIdx: rockIdx,
-			xRest:   xpos,
 		}
-		if mark, ok := results[res]; ok {
-			log("result: iter %d, maxy %d: %v - had also at %d, %d", i, maxY, res, mark.iter, mark.ypos)
-			//
-			dy := maxY - mark.ypos
-			period := i - mark.iter
-			front := i - period
-			n := (cnt - front) / period
-			left := (cnt - front) % period
-			//left1 := cnt - (front + n*period)
-			leftY, _ := part1MainFunc(in, left)
-			//_ = left1
+		if poss, ok := friPositions[fri]; ok {
+			poss = append(poss, position{maxY, i})
+			friPositions[fri] = poss
+			if len(poss) > 3 &&
+				(poss[len(poss)-1].maxY-poss[len(poss)-2].maxY == poss[len(poss)-2].maxY-poss[len(poss)-3].maxY) &&
+				(poss[len(poss)-2].maxY-poss[len(poss)-3].maxY == poss[len(poss)-3].maxY-poss[len(poss)-4].maxY) {
+				dy := poss[len(poss)-1].maxY - poss[len(poss)-2].maxY
+				period := poss[len(poss)-1].iter - poss[len(poss)-2].iter
+				front := poss[0].iter
+				n := (cnt - front) / period
+				// left := cnt - (front + n*period)
 
-			toty := mark.ypos + n*dy + leftY
-			maxY = toty - 1
+				// leftY, _ := part1MainFunc(in, left)
+				//toty := poss[0].maxY + n*dy + leftY
+				toty := poss[0].maxY + n*dy
+				//maxY = toty
+				foundMaxY = maxY
+				addMaxY = toty
+				i = front + n*period
+				log("left: %d", cnt-i)
+				foundPeriod = true
+			}
+			// log("result: iter %d, maxy %d: %v - had also at %d, %d", i, maxY, res, mark.iter, mark.ypos)
+			// //
+			// dy := maxY - mark.ypos
+			// period := i - mark.iter
+			// front := i - period
+			// n := (cnt - front) / period
+			// left := (cnt - front) % period
+			// //left1 := cnt - (front + n*period)
+			// leftY, _ := part1MainFunc(in, left)
+			// //_ = left1
 
-			break
+			// toty := mark.ypos + n*dy + leftY
+			// maxY = toty - 1
+
+			// break
+		} else {
+			friPositions[fri] = []position{{maxY, i}}
 		}
-		results[res] = mark{i, maxY}
 	}
 
-	return maxY, nil
+	log("hm: %d", 131+583090378*2613+2517)
+
+	return (foundMaxY - maxY) + addMaxY, nil
+	// 1523615160369
+	// 1523615155328
+
+	// 1523615160362
 }
+
+// func part2MainFunc(in string, cnt int) (int, error) {
+// 	flows := make([]int, len(in))
+// 	for i, r := range in {
+// 		switch r {
+// 		case left:
+// 			flows[i] = -1
+// 		case right:
+// 			flows[i] = 1
+// 		default:
+// 			fatal("invalid flow rune %q", string(r))
+// 		}
+// 	}
+
+// 	width := 7
+// 	occ := set.New[grid.Point]()
+// 	maxY := 0
+// 	collidesWithRockAt := func(rock Rock, xr, yr int) bool {
+// 		for x := 0; x < rock.Width(); x++ {
+// 			for iy := 0; iy < rock.Height(); iy++ {
+// 				y := rock.Height() - 1 - iy
+// 				if rock[y][x] == '#' {
+// 					ax := xr + x
+// 					ay := yr + iy
+// 					if occ.Contains(grid.Pt(ax, ay)) {
+// 						return true
+// 					}
+// 				}
+// 			}
+// 		}
+// 		return false
+// 	}
+
+// 	type result struct {
+// 		flowIdx int
+// 		rockIdx int
+// 		xRest   int
+// 	}
+// 	type mark struct {
+// 		iter int
+// 		ypos int
+// 	}
+// 	results := map[result]mark{}
+
+// 	flowIdx := 0
+// 	rockIdx := 0
+
+// 	for i := 0; i < cnt; i++ {
+// 		rock := rocks[rockIdx]
+// 		rockIdx++
+// 		if rockIdx >= len(rocks) {
+// 			rockIdx = 0
+// 		}
+// 		xpos := 2
+// 		ypos := maxY + 3
+// 		dumpWithRock(occ, width, rock, xpos, ypos)
+// 		//log("new rock begins falling (%d,%d)", xpos, ypos)
+// 		for {
+// 			dx := flows[flowIdx]
+// 			flowIdx++
+// 			if flowIdx >= len(flows) {
+// 				flowIdx = 0
+// 			}
+// 			nx := xpos + dx
+// 			if nx >= 0 && nx+rock.Width() <= width {
+// 				//check if new pos collides with occ
+// 				if !collidesWithRockAt(rock, nx, ypos) {
+// 					xpos = nx
+// 				}
+// 			}
+// 			dumpWithRock(occ, width, rock, xpos, ypos)
+
+// 			canFall := ypos > 0 && !collidesWithRockAt(rock, xpos, ypos-1)
+
+// 			if canFall {
+// 				ypos--
+// 				dumpWithRock(occ, width, rock, xpos, ypos)
+// 				continue
+// 			}
+// 			for y := 0; y < len(rock); y++ {
+// 				ri := len(rock) - 1 - y
+// 				for x, r := range rock[ri] {
+// 					if r == '#' {
+// 						if occ.Contains(grid.Pt(xpos+x, ypos+y)) {
+// 							fatal("not that way")
+// 						}
+// 						occ.Insert(grid.Pt(xpos+x, ypos+y))
+// 						if ypos+y+1 > maxY {
+// 							maxY = ypos + y + 1
+// 						}
+// 					}
+// 				}
+// 			}
+// 			dump(occ, width)
+// 			break
+// 		}
+// 		res := result{
+// 			flowIdx: flowIdx,
+// 			rockIdx: rockIdx,
+// 			xRest:   xpos,
+// 		}
+// 		if mark, ok := results[res]; ok {
+// 			log("result: iter %d, maxy %d: %v - had also at %d, %d", i, maxY, res, mark.iter, mark.ypos)
+// 			//
+// 			dy := maxY - mark.ypos
+// 			period := i - mark.iter
+// 			front := i - period
+// 			n := (cnt - front) / period
+// 			left := (cnt - front) % period
+// 			//left1 := cnt - (front + n*period)
+// 			leftY, _ := part1MainFunc(in, left)
+// 			//_ = left1
+
+// 			toty := mark.ypos + n*dy + leftY
+// 			maxY = toty - 1
+
+// 			break
+// 		}
+// 		results[res] = mark{i, maxY}
+// 	}
+
+// 	return maxY, nil
+// }
 
 const skipDump = true
 
