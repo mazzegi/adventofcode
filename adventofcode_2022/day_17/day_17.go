@@ -70,17 +70,6 @@ func (rc Rock) Height() int {
 	return len(rc)
 }
 
-func (rc Rock) bottomXs() []int {
-	var bxs []int
-	bl := rc[len(rc)-1]
-	for x, r := range bl {
-		if r == '#' {
-			bxs = append(bxs, x)
-		}
-	}
-	return bxs
-}
-
 func part1MainFunc(in string, cnt int) (int, error) {
 	flows := make([]int, len(in))
 	for i, r := range in {
@@ -143,34 +132,17 @@ func part1MainFunc(in string, cnt int) (int, error) {
 				//check if new pos collides with occ
 				if !collidesWithRockAt(rock, nx, ypos) {
 					xpos = nx
-					//	log("Jet gas pushes rock %s (%d,%d) (fi=%d)", tr(dx), xpos, ypos, flowIdx-1)
-				} else {
-					//	log("Jet gas pushes rock %s, but nothing happens (%d,%d) (fi=%d)", tr(dx), xpos, ypos, flowIdx-1)
 				}
-			} else {
-				//log("Jet gas pushes rock %s, but nothing happens (%d,%d) (fi=%d)", tr(dx), xpos, ypos, flowIdx-1)
 			}
 			dumpWithRock(occ, width, rock, xpos, ypos)
-			// down
-			// canFall := ypos > 0
-			// if canFall {
-			// 	bxs := rock.bottomXs()
-			// 	for _, bx := range bxs {
-			// 		if occ.Contains(grid.Pt(xpos+bx, ypos-1)) {
-			// 			canFall = false
-			// 			break
-			// 		}
-			// 	}
-			// }
+
 			canFall := ypos > 0 && !collidesWithRockAt(rock, xpos, ypos-1)
 
 			if canFall {
 				ypos--
 				dumpWithRock(occ, width, rock, xpos, ypos)
-				//log("Rock falls 1 unit (%d,%d)", xpos, ypos)
 				continue
 			}
-			//log("Rock falls 1 unit, causing it to rest (%d,%d)", xpos, ypos)
 			for y := 0; y < len(rock); y++ {
 				ri := len(rock) - 1 - y
 				for x, r := range rock[ri] {
@@ -188,7 +160,6 @@ func part1MainFunc(in string, cnt int) (int, error) {
 			dump(occ, width)
 			break
 		}
-
 		rockIdx++
 	}
 
@@ -196,17 +167,126 @@ func part1MainFunc(in string, cnt int) (int, error) {
 }
 
 func part2MainFunc(in string, cnt int) (int, error) {
-	repeatsAfter := len(rocks) * len(in)
-	_ = repeatsAfter
+	flows := make([]int, len(in))
+	for i, r := range in {
+		switch r {
+		case left:
+			flows[i] = -1
+		case right:
+			flows[i] = 1
+		default:
+			fatal("invalid flow rune %q", string(r))
+		}
+	}
 
-	one, _ := part1MainFunc(in, repeatsAfter)
-	doReg := cnt / repeatsAfter
-	doRest := cnt - doReg*repeatsAfter
-	rest, _ := part1MainFunc(in, doRest)
+	width := 7
+	occ := set.New[grid.Point]()
+	maxY := 0
+	collidesWithRockAt := func(rock Rock, xr, yr int) bool {
+		for x := 0; x < rock.Width(); x++ {
+			for iy := 0; iy < rock.Height(); iy++ {
+				y := rock.Height() - 1 - iy
+				if rock[y][x] == '#' {
+					ax := xr + x
+					ay := yr + iy
+					if occ.Contains(grid.Pt(ax, ay)) {
+						return true
+					}
+				}
+			}
+		}
+		return false
+	}
 
-	res := one*doReg + rest
+	type result struct {
+		flowIdx int
+		rockIdx int
+		xRest   int
+	}
+	type mark struct {
+		iter int
+		ypos int
+	}
+	results := map[result]mark{}
 
-	return res, nil
+	flowIdx := 0
+	rockIdx := 0
+
+	for i := 0; i < cnt; i++ {
+		rock := rocks[rockIdx]
+		rockIdx++
+		if rockIdx >= len(rocks) {
+			rockIdx = 0
+		}
+		xpos := 2
+		ypos := maxY + 3
+		dumpWithRock(occ, width, rock, xpos, ypos)
+		//log("new rock begins falling (%d,%d)", xpos, ypos)
+		for {
+			dx := flows[flowIdx]
+			flowIdx++
+			if flowIdx >= len(flows) {
+				flowIdx = 0
+			}
+			nx := xpos + dx
+			if nx >= 0 && nx+rock.Width() <= width {
+				//check if new pos collides with occ
+				if !collidesWithRockAt(rock, nx, ypos) {
+					xpos = nx
+				}
+			}
+			dumpWithRock(occ, width, rock, xpos, ypos)
+
+			canFall := ypos > 0 && !collidesWithRockAt(rock, xpos, ypos-1)
+
+			if canFall {
+				ypos--
+				dumpWithRock(occ, width, rock, xpos, ypos)
+				continue
+			}
+			for y := 0; y < len(rock); y++ {
+				ri := len(rock) - 1 - y
+				for x, r := range rock[ri] {
+					if r == '#' {
+						if occ.Contains(grid.Pt(xpos+x, ypos+y)) {
+							fatal("not that way")
+						}
+						occ.Insert(grid.Pt(xpos+x, ypos+y))
+						if ypos+y+1 > maxY {
+							maxY = ypos + y + 1
+						}
+					}
+				}
+			}
+			dump(occ, width)
+			break
+		}
+		res := result{
+			flowIdx: flowIdx,
+			rockIdx: rockIdx,
+			xRest:   xpos,
+		}
+		if mark, ok := results[res]; ok {
+			log("result: iter %d, maxy %d: %v - had also at %d, %d", i, maxY, res, mark.iter, mark.ypos)
+			//
+			dy := maxY - mark.ypos
+			period := i - mark.iter
+			front := i - period
+			n := (cnt - front) / period
+			left := (cnt - front) % period
+			//left1 := cnt - (front + n*period)
+			leftY, _ := part1MainFunc(in, left)
+			//_ = left1
+
+			toty := mark.ypos + n*dy + leftY
+			maxY = toty - 1
+
+			break
+		}
+		results[res] = mark{i, maxY}
+	}
+
+	return maxY, nil
 }
 
 const skipDump = true
