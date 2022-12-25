@@ -2,6 +2,7 @@ package day_19
 
 import (
 	"fmt"
+	"reflect"
 	"sort"
 	"strings"
 
@@ -152,6 +153,7 @@ func hashResMap(m map[Resource]int) string {
 type State struct {
 	resources map[Resource]int
 	robots    map[Resource]int
+	newRobot  Resource
 }
 
 func NewState() *State {
@@ -165,11 +167,12 @@ func (s *State) Clone() *State {
 	return &State{
 		resources: maps.Clone(s.resources),
 		robots:    maps.Clone(s.robots),
+		newRobot:  s.newRobot,
 	}
 }
 
 func (s *State) Hash() string {
-	return fmt.Sprintf("%s#%s", hashResMap(s.resources), hashResMap(s.robots))
+	return fmt.Sprintf("%s#%s#%d", hashResMap(s.resources), hashResMap(s.robots), s.newRobot)
 }
 
 func (s *State) Mine() {
@@ -202,6 +205,9 @@ func NewPath(ress ...Resource) *Path {
 }
 
 func (p *Path) Clone() *Path {
+	if p == nil {
+		return nil
+	}
 	return &Path{
 		builds: slices.Clone(p.builds),
 	}
@@ -211,83 +217,250 @@ func (p *Path) Clone() *Path {
 
 func NewStateCache() *StateCache {
 	return &StateCache{
-		states: map[string]*Path{},
+		states: map[string][]*Path{},
 	}
 }
 
 type StateCache struct {
-	states map[string]*Path
+	states map[string][]*Path
 }
 
-func (c *StateCache) Find(state *State) (*Path, bool) {
-	p, ok := c.states[state.Hash()]
+func (c *StateCache) Find(state *State) ([]*Path, bool) {
+	ps, ok := c.states[state.Hash()]
 	if !ok {
 		return nil, false
 	}
-	return p.Clone(), true
+	return ps, true
 }
 
-func (c *StateCache) Add(state *State, path *Path) {
-	c.states[state.Hash()] = path.Clone()
+func (c *StateCache) Add(state *State, paths []*Path) {
+	c.states[state.Hash()] = paths
 }
 
-func shortestPathToNextGeodeRobot(blueprint Blueprint, cache *StateCache, state *State, iter int, maxIter int) (*Path, bool) {
-	if iter >= maxIter-1 {
+func shortestPathsToNextGeodeRobot(blueprint Blueprint, cache *StateCache, badCache *StateCache, state *State, minGeodeAtIter *int, iter int, maxIter int) ([]*Path, bool) {
+	if iter >= maxIter {
+		return nil, false
+	}
+	if *minGeodeAtIter > -1 && iter > *minGeodeAtIter {
+		return nil, false
+	}
+	if _, ok := badCache.Find(state); ok {
 		return nil, false
 	}
 	if pc, ok := cache.Find(state); ok {
-		return pc, true
+		if len(pc[0].builds) <= maxIter-iter {
+			return pc, true
+		}
 	}
-	var shortestPath *Path
+	var shortestPaths []*Path
+	shortestPathsLen := func() int {
+		if len(shortestPaths) == 0 {
+			return -1
+		}
+		return len(shortestPaths[0].builds)
+	}
+
 	for _, res := range []Resource{Geode, Obsidian, Clay, Ore, None} {
 		cloneState := state.Clone()
-		cloneState.Mine()
+		//cloneState.Mine()
 		if !blueprint.CanBuild(res, cloneState.resources) {
 			continue
 		}
 		if res == Geode {
+			//log("Geode at iter %d", iter)
 			path := NewPath(Geode)
-			cache.Add(cloneState, path)
-			return path, true
+			cache.Add(cloneState, []*Path{path})
+			return []*Path{path}, true
 		}
+		cloneState.Mine()
 		cloneState.Build(blueprint, res)
-		foundPath, found := shortestPathToNextGeodeRobot(blueprint, cache, cloneState, iter+1, maxIter)
+		foundPaths, found := shortestPathsToNextGeodeRobot(blueprint, cache, badCache, cloneState, minGeodeAtIter, iter+1, maxIter)
 		if !found {
+			badCache.Add(cloneState, nil)
 			continue
 		}
-		if len(foundPath.builds) > maxIter-iter {
-			log("örks")
+
+		fpl := len(foundPaths[0].builds)
+		for _, fp := range foundPaths {
+			if len(fp.builds) != fpl {
+				panic("oops - thta shouldn't happen at all")
+			}
 		}
-		thisPath := NewPath(res)
-		thisPath.builds = append(thisPath.builds, foundPath.builds...)
-		if shortestPath == nil || len(thisPath.builds) < len(shortestPath.builds) {
-			cache.Add(cloneState, thisPath)
-			shortestPath = thisPath
+
+		foundTotalIter := iter + fpl
+		if *minGeodeAtIter < 0 {
+			*minGeodeAtIter = foundTotalIter
+			//log("min-geode: %d", *minGeodeAtIter)
+		} else if foundTotalIter < *minGeodeAtIter {
+			*minGeodeAtIter = foundTotalIter
+			//log("min-geode: %d", *minGeodeAtIter)
+		}
+
+		if fpl > maxIter-iter {
+			log("örks %d > %d", fpl, maxIter-iter)
+		}
+
+		spl := shortestPathsLen()
+
+		thisPathLen := fpl + 1
+		var thisPaths []*Path
+		for _, fp := range foundPaths {
+			thisPath := NewPath(res)
+			thisPath.builds = append(thisPath.builds, fp.builds...)
+			thisPaths = append(thisPaths, thisPath)
+		}
+		if spl < 0 {
+			shortestPaths = thisPaths
+		} else if thisPathLen < spl {
+			shortestPaths = thisPaths
+		} else if thisPathLen == spl {
+			shortestPaths = append(shortestPaths, thisPaths...)
 		}
 	}
-	if shortestPath != nil && len(shortestPath.builds) > 0 {
-		return shortestPath, true
+	spl := shortestPathsLen()
+	if spl > 0 {
+		cache.Add(state, shortestPaths)
+		return shortestPaths, true
 	}
 	return nil, false
 }
 
+func shortestPaths(blueprint Blueprint, cache *StateCache, badCache *StateCache, state *State, iter int, maxIter int) ([]*Path, bool) {
+	totalPaths := []*Path{}
+	minGeodeAtIter := -1
+	paths, ok := shortestPathsToNextGeodeRobot(blueprint, cache, badCache, state, &minGeodeAtIter, iter, maxIter)
+	if !ok {
+		return nil, false
+	}
+	for _, path := range paths {
+		cloneState := state.Clone()
+		newIter := applyPath(blueprint, cloneState, path)
+		newIter += iter
+		thisPaths, ok := shortestPaths(blueprint, cache, badCache, cloneState, newIter, maxIter)
+		if ok {
+			for _, tp := range thisPaths {
+				newPath := NewPath(path.builds...)
+				newPath.builds = append(newPath.builds, tp.builds...)
+				totalPaths = append(totalPaths, newPath)
+			}
+		} else {
+			totalPaths = append(totalPaths, path)
+		}
+	}
+	return totalPaths, true
+}
+
+func applyPath(blueprint Blueprint, state *State, path *Path) int {
+	iter := 0
+	for _, bres := range path.builds {
+		if !blueprint.CanBuild(bres, state.resources) {
+			panic("oops")
+		}
+		state.Mine()
+		state.Build(blueprint, bres)
+		iter++
+	}
+	return iter
+}
+
 func collectGeodes(blueprint Blueprint, maxIter int) int {
 	cache := NewStateCache()
+	badCache := NewStateCache()
 	state := NewState()
 	state.robots[Ore] = 1
 	iter := 0
-	for {
-		path, ok := shortestPathToNextGeodeRobot(blueprint, cache, state, iter, maxIter)
-		if !ok {
-			return state.resources[Geode]
+	paths, ok := shortestPaths(blueprint, cache, badCache, state, iter, maxIter)
+	if !ok {
+		panic("oh my god")
+	}
+
+	max := 0
+	for _, totalPath := range paths {
+		//log("total-path (%d): %v", len(totalPath.builds), totalPath)
+		finalState := NewState()
+		finalState.robots[Ore] = 1
+
+		for fi := 0; fi < maxIter; fi++ {
+			//for _, bres := range totalPath {
+			var bres Resource
+			if fi < len(totalPath.builds) {
+				bres = totalPath.builds[fi]
+			} else {
+				bres = None
+			}
+			if !blueprint.CanBuild(bres, finalState.resources) {
+				log("oops")
+			}
+			finalState.Mine()
+			// log("== Minute %02d ==", fi+1)
+			// log("resources: ore=%d, clay=%d, obs=%d, geode=%d", finalState.resources[Ore], finalState.resources[Clay], finalState.resources[Obsidian], finalState.resources[Geode])
+			// log("robots   : ore=%d, clay=%d, obs=%d, geode=%d", finalState.robots[Ore], finalState.robots[Clay], finalState.robots[Obsidian], finalState.robots[Geode])
+			// log("")
+			finalState.Build(blueprint, bres)
 		}
-		//apply path
-		for _, bres := range path.builds {
-			state.Mine()
-			state.Build(blueprint, bres)
-			iter++
+		if finalState.resources[Geode] > max {
+			max = finalState.resources[Geode]
 		}
 	}
+
+	return max
+}
+
+func collectGeodes_depr(blueprint Blueprint, maxIter int) int {
+	cache := NewStateCache()
+	badCache := NewStateCache()
+	state := NewState()
+	state.robots[Ore] = 1
+	state.newRobot = None
+	iter := 0
+	totalPath := []Resource{}
+	for {
+		min := -1
+		paths, ok := shortestPathsToNextGeodeRobot(blueprint, cache, badCache, state, &min, iter, maxIter)
+		if !ok {
+			break
+		}
+		log("%d paths", len(paths))
+		paths = slices.DedupFunc(paths, func(t1, t2 *Path) bool {
+			return reflect.DeepEqual(t1.builds, t2.builds)
+		})
+		log("%d dedup paths", len(paths))
+		// totalPath = append(totalPath, path.builds...)
+		// //apply path
+		// for _, bres := range path.builds {
+		// 	if !blueprint.CanBuild(bres, state.resources) {
+		// 		log("oops")
+		// 	}
+		// 	state.Mine()
+		// 	state.Build(blueprint, bres)
+		// 	iter++
+		// }
+	}
+
+	log("total-path (%d): %v", len(totalPath), totalPath)
+	finalState := NewState()
+	finalState.robots[Ore] = 1
+
+	for fi := 0; fi < maxIter; fi++ {
+		//for _, bres := range totalPath {
+		var bres Resource
+		if fi < len(totalPath) {
+			bres = totalPath[fi]
+		} else {
+			bres = None
+		}
+		if !blueprint.CanBuild(bres, finalState.resources) {
+			log("oops")
+		}
+		finalState.Mine()
+		// log("== Minute %02d ==", fi+1)
+		// log("resources: ore=%d, clay=%d, obs=%d, geode=%d", finalState.resources[Ore], finalState.resources[Clay], finalState.resources[Obsidian], finalState.resources[Geode])
+		// log("robots   : ore=%d, clay=%d, obs=%d, geode=%d", finalState.robots[Ore], finalState.robots[Clay], finalState.robots[Obsidian], finalState.robots[Geode])
+		// log("")
+		finalState.Build(blueprint, bres)
+	}
+
+	return finalState.resources[Geode]
 }
 
 func part1MainFunc(in string) (int, error) {
@@ -311,35 +484,18 @@ func part1MainFunc(in string) (int, error) {
 // 2327 => too low
 
 func part2MainFunc(in string) (int, error) {
-	// var blueprints []Blueprint
-	// for _, line := range readutil.ReadLines(in) {
-	// 	bp := mustParseBlueprint(line)
-	// 	blueprints = append(blueprints, bp)
-	// }
+	var blueprints []Blueprint
+	for _, line := range readutil.ReadLines(in) {
+		bp := mustParseBlueprint(line)
+		blueprints = append(blueprints, bp)
+	}
 
-	// var sum int
-	// for _, bp := range blueprints {
-	// 	//num := collectGeodes(bp, 24)
-	// 	log("##### blueprint %02d #####", bp.ID)
-	// 	gmax = 0
-	// 	earliestClay = -1
-	// 	earliestObsidian = -1
-	// 	earliestGeode = -1
-	// 	resources := map[Resource]int{
-	// 		Ore:      0,
-	// 		Clay:     0,
-	// 		Obsidian: 0,
-	// 		Geode:    0,
-	// 	}
-	// 	robots := map[Resource]int{
-	// 		Ore:      1,
-	// 		Clay:     0,
-	// 		Obsidian: 0,
-	// 		Geode:    0,
-	// 	}
-	// 	num := collectGeodesRecursive(bp, resources, robots, None, 0, 32)
-	// 	sum += num * bp.ID
-	// 	log("blueprint %02d done: %d (%d)", bp.ID, num, sum)
-	// }
-	return 0, nil
+	var sum int
+	for _, bp := range blueprints {
+		log("##### blueprint %02d #####", bp.ID)
+		num := collectGeodes(bp, 32)
+		sum += num * bp.ID
+		log("blueprint %02d done: %d (%d)", bp.ID, num, sum)
+	}
+	return sum, nil
 }
