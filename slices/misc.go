@@ -1,5 +1,11 @@
 package slices
 
+import (
+	"sort"
+
+	"golang.org/x/exp/constraints"
+)
+
 func Clone[T any](ts []T) []T {
 	cts := make([]T, len(ts))
 	copy(cts, ts)
@@ -41,4 +47,10 @@ func Reverse[T any](ts []T) []T {
 		rts[sz-i-1] = t
 	}
 	return rts
+}
+
+func Sort[T constraints.Ordered](ts []T) {
+	sort.Slice(ts, func(i, j int) bool {
+		return ts[i] < ts[j]
+	})
 }
