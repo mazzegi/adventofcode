@@ -38,3 +38,7 @@ func DedupFunc[T any](ts []T, eq func(t1, t2 T) bool) []T {
 	}
 	return ddts
 }
+
+func Dedup[T comparable](ts []T) []T {
+	return DedupFunc(ts, func(t1, t2 T) bool { return t1 == t2 })
+}

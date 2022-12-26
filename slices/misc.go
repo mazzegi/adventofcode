@@ -54,3 +54,10 @@ func Sort[T constraints.Ordered](ts []T) {
 		return ts[i] < ts[j]
 	})
 }
+
+func Insert[T any](ts []T, t T, atIdx int) []T {
+	its := Clone(ts[:atIdx])
+	its = append(its, t)
+	its = append(its, ts[atIdx:]...)
+	return its
+}
