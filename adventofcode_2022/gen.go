@@ -72,6 +72,13 @@ func log(pattern string, args ...interface{}) {
 	fmt.Printf(pattern+"\n", args...)
 }
 
+func fatalIfErr(err error) {
+	if err == nil {
+		return
+	}
+	fatal("err not nil: %v", err)
+}
+
 func fatal(pattern string, args ...interface{}) {
 	panic(fmt.Sprintf(pattern+"\n", args...))
 }
