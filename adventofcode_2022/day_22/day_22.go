@@ -215,6 +215,22 @@ const (
 	Up    Face = "U"
 )
 
+func (f Face) Score() int {
+	switch f {
+	case Right:
+		return 0
+	case Down:
+		return 1
+	case Left:
+		return 2
+	case Up:
+		return 3
+	default:
+		fatal("invalid face %q", f)
+	}
+	return 0
+}
+
 func (f Face) Turn(t string) Face {
 	if t == "R" {
 		switch f {
@@ -268,8 +284,9 @@ func part1MainFunc(in string, inPath string) (int, error) {
 			currFace = currFace.Turn(pp.Turn)
 		}
 	}
+	pwd := 1000*(currPos.Y+1) + 4*(currPos.X+1) + currFace.Score()
 
-	return 0, nil
+	return pwd, nil
 }
 
 func part2MainFunc(in string, inPath string) (int, error) {
