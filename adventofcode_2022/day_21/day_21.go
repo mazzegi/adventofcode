@@ -32,7 +32,8 @@ func Part2() {
 //
 
 type Evaler interface {
-	Eval(Tree) int
+	Eval(Tree) (int, bool)
+	MustEvalTo(Tree, int)
 	CanEval() bool
 }
 
@@ -40,12 +41,16 @@ type ConstEvaler struct {
 	Value int
 }
 
-func (e ConstEvaler) Eval(Tree) int {
-	return e.Value
+func (e ConstEvaler) Eval(Tree) (int, bool) {
+	return e.Value, true
 }
 
 func (e ConstEvaler) CanEval() bool {
 	return true
+}
+
+func (e ConstEvaler) MustEvalTo(tree Tree, n int) {
+	fatal("const evaler - cannot must eval to")
 }
 
 type Op string
@@ -73,34 +78,98 @@ type ExprEvaler struct {
 	Op       Op
 }
 
-func (e ExprEvaler) CanEval() bool {
+func (e *ExprEvaler) CanEval() bool {
 	return true
 }
 
-func (e ExprEvaler) Eval(tree Tree) int {
-	if e.x == nil {
-		v := tree.Eval(e.XID)
-		e.x = &v
+func (e *ExprEvaler) MustEvalTo(tree Tree, n int) {
+	if e.x != nil && e.y != nil {
+		fatal("expr-evaler: all values are set - cannot must eval to")
+	}
+	if e.x == nil && e.y == nil {
+		fatal("expr-evaler: all values are unset - cannot must eval to")
 	}
 	if e.y == nil {
-		v := tree.Eval(e.YID)
-		e.y = &v
+		var mustY int
+		switch e.Op {
+		case Plus:
+			mustY = n - *e.x
+		case Minus:
+			mustY = *e.x - n
+		case Mult:
+			mustY = n / (*e.x)
+		case Div:
+			mustY = (*e.x) / n
+		case Eq:
+			if n == 1 {
+				mustY = *e.x
+			} else {
+				fatal("cannot must equal != 0")
+			}
+		default:
+			panic("invalid op " + e.Op)
+		}
+		tree.MustEvalTo(e.YID, mustY)
+	} else { // e.x == nil
+		var mustX int
+		switch e.Op {
+		case Plus:
+			mustX = n - *e.y
+		case Minus:
+			mustX = n + *e.y
+		case Mult:
+			mustX = n / (*e.y)
+		case Div:
+			mustX = n * (*e.y)
+		case Eq:
+			if n == 1 {
+				mustX = *e.y
+			} else {
+				fatal("cannot must equal != 0")
+			}
+		default:
+			panic("invalid op " + e.Op)
+		}
+		tree.MustEvalTo(e.XID, mustX)
+	}
+}
+
+func (e *ExprEvaler) Eval(tree Tree) (int, bool) {
+	allOk := true
+	if e.x == nil {
+		v, ok := tree.Eval(e.XID)
+		if !ok {
+			allOk = false
+		} else {
+			e.x = &v
+		}
+	}
+	if e.y == nil {
+		v, ok := tree.Eval(e.YID)
+		if !ok {
+			allOk = false
+		} else {
+			e.y = &v
+		}
+	}
+	if !allOk {
+		return 0, false
 	}
 
 	switch e.Op {
 	case Plus:
-		return *e.x + *e.y
+		return *e.x + *e.y, true
 	case Minus:
-		return *e.x - *e.y
+		return *e.x - *e.y, true
 	case Mult:
-		return *e.x * *e.y
+		return *e.x * *e.y, true
 	case Div:
-		return *e.x / *e.y
+		return *e.x / *e.y, true
 	case Eq:
 		if *e.x == *e.y {
-			return 1
+			return 1, true
 		}
-		return 0
+		return 0, true
 	default:
 		panic("invalid op " + e.Op)
 	}
@@ -108,12 +177,20 @@ func (e ExprEvaler) Eval(tree Tree) int {
 
 type Tree map[string]Evaler
 
-func (tree Tree) Eval(id string) int {
+func (tree Tree) Eval(id string) (int, bool) {
 	e, ok := tree[id]
 	if !ok {
 		fatal("no such id %q", id)
 	}
 	return e.Eval(tree)
+}
+
+func (tree Tree) MustEvalTo(id string, n int) {
+	e, ok := tree[id]
+	if !ok {
+		fatal("no such id %q", id)
+	}
+	e.MustEvalTo(tree, n)
 }
 
 func (tree Tree) CanEval(id string) bool {
@@ -157,7 +234,7 @@ func mustParseTree(in string) Tree {
 			fatal("failed to parse %q", line)
 		}
 
-		tree[id] = ExprEvaler{
+		tree[id] = &ExprEvaler{
 			XID: left,
 			YID: right,
 			Op:  op,
@@ -168,32 +245,46 @@ func mustParseTree(in string) Tree {
 
 func part1MainFunc(in string) (int, error) {
 	tree := mustParseTree(in)
-	res := tree.Eval("root")
+	res, ok := tree.Eval("root")
+	if !ok {
+		fatal("failed to eval root")
+	}
 	return res, nil
 }
 
 type HumanEvaler struct {
+	Val int
 }
 
-func (e HumanEvaler) Eval(Tree) int {
-	return 0
+func (e *HumanEvaler) Eval(Tree) (int, bool) {
+	return 0, false
 }
 
-func (e HumanEvaler) CanEval() bool {
+func (e *HumanEvaler) CanEval() bool {
 	return false
+}
+
+func (e *HumanEvaler) MustEvalTo(tree Tree, n int) {
+	e.Val = n
 }
 
 func part2MainFunc(in string) (int, error) {
 	tree := mustParseTree(in)
 	root := tree["root"]
-	expRoot := root.(ExprEvaler)
+	expRoot := root.(*ExprEvaler)
 	expRoot.Op = Eq
 	tree["root"] = expRoot
 
-	humn := HumanEvaler{}
+	humn := &HumanEvaler{}
 	tree["humn"] = humn
 
-	res := 0
+	_, ok := tree.Eval("root")
+	if ok {
+		fatal("eval root should fail here")
+	}
+	tree.MustEvalTo("root", 1)
+
+	res := humn.Val
 	return res, nil
 }
 
