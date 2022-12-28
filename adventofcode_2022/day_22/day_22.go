@@ -31,7 +31,8 @@ func Part1() {
 }
 
 func Part2() {
-	res, err := part2MainFunc(input, inputPath, connect)
+	cube := mustParseCube(input)
+	res, err := part2MainFunc(cube, inputPath)
 	errutil.ExitOnErr(err)
 	log("part2: result = %d", res)
 }
@@ -305,19 +306,18 @@ func part1MainFunc(in string, inPath string) (int, error) {
 	return pwd, nil
 }
 
-func part2MainFunc(in string, inPath string, connectFnc func(cb *CubeBoard)) (int, error) {
+func part2MainFunc(cube *Cube, inPath string) (int, error) {
 	path := mustParsePath(inPath)
-	board := mustParseCubeBoard(in)
-	connectFnc(board)
 
-	currPos := board.Start()
+	currPos := cube.Start()
 	currFace := Right
 	for _, pp := range path {
 		// go ahead number of moves
 		for imv := 0; imv < pp.Moves; imv++ {
-			nextPos, nextTile := board.NextPos(currPos, currFace)
+			nextPos, nextFace, nextTile := cube.NextPos(currPos, currFace)
 			if nextTile == Open {
 				currPos = nextPos
+				currFace = nextFace
 			} else {
 				break
 			}
