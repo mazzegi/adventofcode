@@ -14,8 +14,10 @@ type Set[T comparable] struct {
 	values map[T]struct{}
 }
 
-func (s *Set[T]) Insert(t T) {
-	s.values[t] = struct{}{}
+func (s *Set[T]) Insert(ts ...T) {
+	for _, t := range ts {
+		s.values[t] = struct{}{}
+	}
 }
 
 func (s *Set[T]) Remove(t T) {

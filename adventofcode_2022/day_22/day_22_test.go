@@ -23,23 +23,6 @@ const inputTest = `
 
 const inputTestPath = "10R5L5R10L4R5L5"
 
-const strConnectionsTets = `
-	# Side 1
-	up:    8,0  ... 11,0  => down: 3,4 ...0,4
-	left:  8,0  ... 8,3   => down: 4,4 ...7,4
-	right: 11,0 ... 11,3  => left: 15,11 ...15,8
-
-	# Side 4
-	right: 11,4 ... 11,7  => down: 15,8 ... 12,8
-
-	# Side 2
-	left:  0,4  ... 0,7   => up  : 15,11 ... 12,11
-	down:  0,7  ... 3,7   => up  : 11,11 ... 8,11
-
-	# Side 3
-	down:  4,7  ... 7,7   => right: 8,11 ...11,11
-`
-
 func TestPart1MainFunc(t *testing.T) {
 	res, err := part1MainFunc(inputTest, inputTestPath)
 	testutil.CheckUnexpectedError(t, err)
