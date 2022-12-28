@@ -32,6 +32,7 @@ func Part1() {
 
 func Part2() {
 	cube := mustParseCube(input)
+	connect(cube)
 	res, err := part2MainFunc(cube, inputPath)
 	errutil.ExitOnErr(err)
 	log("part2: result = %d", res)
