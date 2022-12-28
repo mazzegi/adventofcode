@@ -244,7 +244,7 @@ outer:
 	}
 }
 
-func (g *Grid) Move() {
+func (g *Grid) Move() int {
 	proposedPoints := map[grid.Point][]int{}
 	for _, e := range g.elves {
 		if !e.Proposed {
@@ -260,6 +260,7 @@ func (g *Grid) Move() {
 		}
 	}
 
+	moveCount := 0
 	for _, e := range g.elves {
 		if !e.Proposed {
 			continue
@@ -273,7 +274,9 @@ func (g *Grid) Move() {
 			fatal("panic!!!")
 		}
 		g.elves[e.Pos] = e
+		moveCount++
 	}
+	return moveCount
 }
 
 func part1MainFunc(in string) (int, error) {
@@ -299,10 +302,30 @@ func part1MainFunc(in string) (int, error) {
 }
 
 func part2MainFunc(in string) (int, error) {
-	return 0, nil
+	g := mustParseGrid(in)
+
+	dump(g, -1)
+	order := []Direction{N, S, W, E}
+	var noMove int
+	i := 0
+	for {
+		g.Propose(order)
+		mcnt := g.Move()
+		if mcnt == 0 {
+			noMove = i + 1
+			break
+		}
+		dump(g, i)
+		//order = append(order[1:], order[0])
+		neworder := append([]Direction{}, order[1:]...)
+		neworder = append(neworder, order[0])
+		order = neworder
+		i++
+	}
+	return noMove, nil
 }
 
-const skipDump = false
+const skipDump = true
 
 func dump(g *Grid, iter int) {
 	if skipDump {
