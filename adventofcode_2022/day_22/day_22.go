@@ -31,7 +31,7 @@ func Part1() {
 }
 
 func Part2() {
-	res, err := part2MainFunc(input, inputPath)
+	res, err := part2MainFunc(input, inputPath, connect)
 	errutil.ExitOnErr(err)
 	log("part2: result = %d", res)
 }
@@ -231,6 +231,22 @@ func (f Face) Score() int {
 	return 0
 }
 
+func (f Face) Opposite() Face {
+	switch f {
+	case Right:
+		return Left
+	case Down:
+		return Up
+	case Left:
+		return Right
+	case Up:
+		return Down
+	default:
+		fatal("invalid face %q", f)
+	}
+	return ""
+}
+
 func (f Face) Turn(t string) Face {
 	if t == "R" {
 		switch f {
@@ -289,6 +305,29 @@ func part1MainFunc(in string, inPath string) (int, error) {
 	return pwd, nil
 }
 
-func part2MainFunc(in string, inPath string) (int, error) {
-	return 0, nil
+func part2MainFunc(in string, inPath string, connectFnc func(cb *CubeBoard)) (int, error) {
+	path := mustParsePath(inPath)
+	board := mustParseCubeBoard(in)
+	connectFnc(board)
+
+	currPos := board.Start()
+	currFace := Right
+	for _, pp := range path {
+		// go ahead number of moves
+		for imv := 0; imv < pp.Moves; imv++ {
+			nextPos, nextTile := board.NextPos(currPos, currFace)
+			if nextTile == Open {
+				currPos = nextPos
+			} else {
+				break
+			}
+		}
+		//
+		if pp.Turn != "" {
+			currFace = currFace.Turn(pp.Turn)
+		}
+	}
+	pwd := 1000*(currPos.Y+1) + 4*(currPos.X+1) + currFace.Score()
+
+	return pwd, nil
 }
