@@ -42,7 +42,7 @@ func Part1() {
 }
 
 func Part2() {
-	res, err := part2MainFunc(input, 3000)
+	res, err := part2MainFunc(input, 500)
 	errutil.ExitOnErr(err)
 	log("part2: result = %d", res)
 }
@@ -228,22 +228,25 @@ func part1MainFunc(in string, maxIter int) (int, error) {
 func part2MainFunc(in string, maxIter int) (int, error) {
 	log("part1 ...")
 	g := mustParseGrid(in)
-	finder1 := NewFinder(g, maxIter)
+	finder1 := NewFinder(g, 300)
 	res1 := finder1.Find()
+	log("part1: %d", res1)
 
 	log("part2 ...")
 	g.Move(res1)
 	mg2 := g.Mirrored()
 	finder2 := NewFinder(mg2, maxIter)
-	finder2.cache = finder1.cache
+	//finder2.cache = finder1.cache
 	res2 := finder2.Find()
+	log("part2: %d", res2)
 
 	log("part3 ...")
 	mg2.Move(res2)
 	mg3 := mg2.Mirrored()
 	finder3 := NewFinder(mg3, maxIter)
-	finder3.cache = finder2.cache
+	//finder3.cache = finder2.cache
 	res3 := finder3.Find()
+	log("part3: %d", res3)
 
 	res := res1 + res2 + res3
 	return res, nil
