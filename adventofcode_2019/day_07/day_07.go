@@ -31,7 +31,7 @@ func Part2() {
 
 func part1MainFunc(prg []int) (int, error) {
 	var max int
-	perms := combi.Permutations([]int{0, 1, 2, 3, 4})
+	perms := combi.IntPermutations([]int{0, 1, 2, 3, 4})
 	for _, perm := range perms {
 		phases := [5]int{perm[0], perm[1], perm[2], perm[3], perm[4]}
 		out := exec(prg, phases)
@@ -74,7 +74,7 @@ func exec(prg []int, phases [5]int) int {
 
 func part2MainFunc(prg []int) (int, error) {
 	var max int
-	perms := combi.Permutations([]int{5, 6, 7, 8, 9})
+	perms := combi.IntPermutations([]int{5, 6, 7, 8, 9})
 	for _, perm := range perms {
 		phases := [5]int{perm[0], perm[1], perm[2], perm[3], perm[4]}
 		out := execC(prg, phases)
