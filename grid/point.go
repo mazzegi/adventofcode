@@ -3,6 +3,7 @@ package grid
 import (
 	"fmt"
 	"math"
+	"slices"
 
 	"github.com/mazzegi/adventofcode/intutil"
 	"github.com/mazzegi/adventofcode/mathutil"
@@ -125,4 +126,22 @@ func (p Point) Between(p1, p2 Point) bool {
 		return false
 	}
 	return true
+}
+
+func SortPoints(pts []Point) {
+	slices.SortFunc(pts, func(a, b Point) int {
+		if a.X < b.X {
+			return -1
+		} else if a.X > b.X {
+			return 1
+		}
+
+		if a.Y < b.Y {
+			return -1
+		} else if a.Y > b.Y {
+			return 1
+		}
+
+		return 0
+	})
 }
