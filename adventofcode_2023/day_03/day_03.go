@@ -2,13 +2,13 @@ package day_03
 
 import (
 	"fmt"
-	"os"
+	"math"
 	"strconv"
-	"strings"
 	"unicode"
 
 	"github.com/mazzegi/adventofcode/errutil"
 	"github.com/mazzegi/adventofcode/grid"
+	"github.com/mazzegi/adventofcode/mathutil"
 	"github.com/mazzegi/adventofcode/readutil"
 )
 
@@ -130,34 +130,60 @@ func part1MainFunc(in string) (int, error) {
 	}
 
 	var sum int
-	atSymbols := []NumberItem{}
 	for _, ni := range numItems {
 		as := NumberItemAdjacents(ni)
 		if symAtAnyOf(as) {
 			sum += ni.Number
-			atSymbols = append(atSymbols, ni)
 		}
 	}
-	dumpDebugMap(lines, atSymbols)
 
 	return sum, nil
 }
 
-func part2MainFunc(in string) (int, error) {
-	return 0, nil
+func pointsAdjacent(p1, p2 grid.Point) bool {
+	d := p1.Sub(p2)
+	nm := d.Norm()
+	return mathutil.FloatsEqual(nm, 1.0, 1e-6) || mathutil.FloatsEqual(nm, math.Sqrt2, 1e-6)
 }
 
-func dumpDebugMap(lines []string, itemsAtSymbols []NumberItem) {
-	for _, ni := range itemsAtSymbols {
-		line := []rune(lines[ni.Position.Y])
-		for i := 0; i < ni.NumDigits; i++ {
-			line[ni.Position.X+i] = 'X'
+func isNumItemAdjacentTo(ni NumberItem, pt grid.Point) bool {
+	for i := 0; i < ni.NumDigits; i++ {
+		test := grid.Pt(ni.Position.X+i, ni.Position.Y)
+		if pointsAdjacent(test, pt) {
+			return true
 		}
-		lines[ni.Position.Y] = string(line)
 	}
-	err := os.WriteFile("dump_debug_map.txt", []byte(strings.Join(lines, "\n")), os.ModePerm)
-	errutil.FatalWhen(err)
+	return false
 }
 
-// 7048252 => too high
-// 497205 => too low
+func part2MainFunc(in string) (int, error) {
+	lines := readutil.ReadLines(in)
+	numItems, symItems := mustParseItems(lines)
+
+	numItemsAdjacentTo := func(pt grid.Point) []NumberItem {
+		var nis []NumberItem
+		for _, ni := range numItems {
+			if isNumItemAdjacentTo(ni, pt) {
+				nis = append(nis, ni)
+			}
+		}
+		return nis
+	}
+
+	//find gears
+	var sum int
+	for _, si := range symItems {
+		if si.Symbol != '*' {
+			continue
+		}
+		// a gear
+		nis := numItemsAdjacentTo(si.Position)
+		if len(nis) != 2 {
+			continue
+		}
+		rat := nis[0].Number * nis[1].Number
+		sum += rat
+	}
+
+	return sum, nil
+}
