@@ -1,11 +1,11 @@
 package maps
 
+import (
+	stdmaps "maps"
+)
+
 func Clone[K comparable, T any](m map[K]T) map[K]T {
-	cm := map[K]T{}
-	for k, t := range m {
-		cm[k] = t
-	}
-	return cm
+	return stdmaps.Clone(m)
 }
 
 func Values[K comparable, T any](m map[K]T) []T {
