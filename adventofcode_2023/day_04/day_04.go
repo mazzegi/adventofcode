@@ -27,10 +27,8 @@ func Part2() {
 }
 
 type Card struct {
-	ID                int
-	WinningNumbers    []int
-	WinningNumbersSet *set.Set[int]
-	MyNumbers         []int
+	ID         int
+	MatchCount int
 }
 
 func mustStringsToInts(sl []string) []int {
@@ -61,10 +59,16 @@ func mustParseCard(s string) Card {
 		panic("cannot cut: " + rest)
 	}
 
+	winningNumbers := mustStringsToInts(strings.Split(swinning, " "))
+	myNumbers := mustStringsToInts(strings.Split(smy, " "))
+	winningNumbersSet := set.New[int](winningNumbers...)
+
 	card := Card{ID: id}
-	card.WinningNumbers = mustStringsToInts(strings.Split(swinning, " "))
-	card.MyNumbers = mustStringsToInts(strings.Split(smy, " "))
-	card.WinningNumbersSet = set.New[int](card.WinningNumbers...)
+	for _, myn := range myNumbers {
+		if winningNumbersSet.Contains(myn) {
+			card.MatchCount++
+		}
+	}
 	return card
 }
 
@@ -89,14 +93,8 @@ func part1MainFunc(in string) (int, error) {
 
 	var sum int
 	for _, card := range cards {
-		var matchCount int
-		for _, myn := range card.MyNumbers {
-			if card.WinningNumbersSet.Contains(myn) {
-				matchCount++
-			}
-		}
-		if matchCount > 0 {
-			sum += powN(2, matchCount-1)
+		if card.MatchCount > 0 {
+			sum += powN(2, card.MatchCount-1)
 		}
 	}
 
@@ -104,5 +102,26 @@ func part1MainFunc(in string) (int, error) {
 }
 
 func part2MainFunc(in string) (int, error) {
-	return 0, nil
+	cards := mustParseCards(readutil.ReadLines(in))
+	var total int
+	for _, card := range cards {
+		total += collectSubsOf(card, cards) + 1
+	}
+	return total, nil
+}
+
+func collectSubsOf(card Card, cards []Card) int {
+	var winCardsIdxs []int
+	for idx := card.ID; idx < card.ID+card.MatchCount; idx++ {
+		if idx < len(cards) {
+			winCardsIdxs = append(winCardsIdxs, idx)
+		}
+	}
+	cnt := 0
+	for _, wi := range winCardsIdxs {
+		wcard := cards[wi]
+		cnt += collectSubsOf(wcard, cards) + 1
+	}
+
+	return cnt
 }

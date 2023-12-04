@@ -27,7 +27,7 @@ func TestPart1MainFunc(t *testing.T) {
 func TestPart2MainFunc(t *testing.T) {
 	res, err := part2MainFunc(inputTest)
 	testutil.CheckUnexpectedError(t, err)
-	var exp int = -42
+	var exp int = 30
 	if exp != res {
 		t.Fatalf("want %d, have %d", exp, res)
 	}
