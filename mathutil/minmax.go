@@ -15,3 +15,29 @@ func Max[T constraints.Ordered](t1, t2 T) T {
 	}
 	return t2
 }
+
+func MinOfSlice[T constraints.Ordered](ts []T) T {
+	if len(ts) == 0 {
+		panic("slice is empty")
+	}
+	min := ts[0]
+	for _, t := range ts {
+		if t < min {
+			min = t
+		}
+	}
+	return min
+}
+
+func MaxOfSlice[T constraints.Ordered](ts []T) T {
+	if len(ts) == 0 {
+		panic("slice is empty")
+	}
+	max := ts[0]
+	for _, t := range ts {
+		if t > max {
+			max = t
+		}
+	}
+	return max
+}
