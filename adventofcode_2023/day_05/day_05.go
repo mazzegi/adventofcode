@@ -2,6 +2,7 @@ package day_05
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 	"time"
 
@@ -152,6 +153,18 @@ type Range struct {
 	Len      int
 }
 
+func (r Range) String() string {
+	return fmt.Sprintf("[%d: +%d)", r.StartIdx, r.Len)
+}
+
+func dumpRanges(rs []Range) string {
+	var sl []string
+	for _, r := range rs {
+		sl = append(sl, r.String())
+	}
+	return strings.Join(sl, ", ")
+}
+
 func part2MainFunc(in string) (int, error) {
 	lines := readutil.ReadLines(in)
 	if len(lines) < 8 {
@@ -171,14 +184,6 @@ func part2MainFunc(in string) (int, error) {
 			Len:      seedRangesRaw[i+1],
 		})
 	}
-	log("generating seeds ...")
-	var seeds []int
-	for _, sr := range seedRanges {
-		for i := sr.StartIdx; i < sr.StartIdx+sr.Len; i++ {
-			seeds = append(seeds, i)
-		}
-	}
-	log("generating seeds ...done")
 
 	var mappings []*Mapping
 	var currMapping *Mapping
@@ -186,6 +191,9 @@ func part2MainFunc(in string) (int, error) {
 		if currMapping == nil {
 			return
 		}
+		sort.Slice(currMapping.Ranges, func(i, j int) bool {
+			return currMapping.Ranges[i].FromStartIdx < currMapping.Ranges[j].FromStartIdx
+		})
 		mappings = append(mappings, currMapping)
 	}
 
@@ -231,13 +239,100 @@ func part2MainFunc(in string) (int, error) {
 	}
 
 	m := mustFindMappingForSource("seed")
-	vals := slices.Clone(seeds)
+	ranges := slices.Clone(seedRanges)
+	log("initial seeds: %s", dumpRanges(ranges))
 	for {
 		log("map %q => %q", m.FromCategory, m.ToCategory)
-		vals = m.MapMany(vals)
+		ranges = mapRanges(m, ranges)
+		log("ranges: %s", dumpRanges(ranges))
+
 		if m.ToCategory == "location" {
-			return mathutil.MinOfSlice(vals), nil
+			return minOfRanges(ranges), nil
 		}
 		m = mustFindMappingForSource(m.ToCategory)
 	}
 }
+
+func minOfRanges(ranges []Range) int {
+	if len(ranges) == 0 {
+		panic("ranges is empty")
+	}
+	min := ranges[0].StartIdx
+	for _, r := range ranges {
+		if r.StartIdx < min {
+			min = r.StartIdx
+		}
+	}
+	return min
+}
+
+func mapRanges(m *Mapping, ranges []Range) []Range {
+	var mranges []Range
+	for _, r := range ranges {
+		mranges = append(mranges, mapRange(m, r)...)
+	}
+	return mranges
+}
+
+func mapRange(m *Mapping, r Range) []Range {
+	var mranges []Range
+	leftRange := r
+	var notMappedRanges []Range
+
+	// we can rely on sorted mapping ranges
+loop:
+	for _, mr := range m.Ranges {
+		if leftRange.StartIdx >= mr.FromStartIdx &&
+			leftRange.StartIdx < mr.FromStartIdx+mr.Len {
+
+			if overlapSizeBegin := mr.FromStartIdx - leftRange.StartIdx; overlapSizeBegin > 0 {
+				notMappedRanges = append(notMappedRanges, Range{
+					StartIdx: leftRange.StartIdx,
+					Len:      overlapSizeBegin,
+				})
+			}
+
+			if leftRange.Len <= mr.Len-(leftRange.StartIdx-mr.FromStartIdx) {
+				// left fits completely => size = Len
+				mranges = append(mranges, Range{
+					StartIdx: mr.ToStartIdx + (leftRange.StartIdx - mr.FromStartIdx),
+					Len:      leftRange.Len,
+				})
+				leftRange = Range{}
+				break loop
+			} else {
+				size := mr.Len - (leftRange.StartIdx - mr.FromStartIdx)
+				mranges = append(mranges, Range{
+					StartIdx: mr.ToStartIdx + (leftRange.StartIdx - mr.FromStartIdx),
+					Len:      size,
+				})
+				leftRange = Range{
+					StartIdx: leftRange.StartIdx + size,
+					Len:      leftRange.Len - size,
+				}
+			}
+		}
+	}
+	if leftRange.Len > 0 {
+		notMappedRanges = append(notMappedRanges, Range{
+			StartIdx: leftRange.StartIdx,
+			Len:      leftRange.Len,
+		})
+	}
+
+	// not-mapped ranges are just mapping themselfs as identities
+	mranges = append(mranges, notMappedRanges...)
+	if len(mranges) == 0 {
+		panic("örks")
+	}
+
+	return mranges
+}
+
+/*
+type MappingRange struct {
+	FromStartIdx int
+	ToStartIdx   int
+	Len          int
+}
+*/
