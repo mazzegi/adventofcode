@@ -36,6 +36,12 @@ func CharRank(r rune) int {
 	return strings.IndexRune(HandChars, r)
 }
 
+const HandCharsPart2 = "AKQT98765432J"
+
+func CharRankPart2(r rune) int {
+	return strings.IndexRune(HandCharsPart2, r)
+}
+
 type Hand string
 
 func IsValidHand(s string) bool {
@@ -155,6 +161,80 @@ func part1MainFunc(in string) (int, error) {
 	return wsum, nil
 }
 
+func ClassifyHandPart2(h Hand) HandType {
+	var jokerCount int
+	hg := map[rune]int{}
+	for _, r := range h {
+		if r == 'J' {
+			jokerCount++
+			continue
+		}
+		hg[r]++
+	}
+
+	hgvals := maps.Values(hg)
+	slices.Sort(hgvals)
+	slices.Reverse(hgvals)
+
+	if jokerCount == 5 {
+		return FiveOfAKind
+	}
+
+	// now add jokers to those with the greatest amount
+	hgvals[0] += jokerCount
+
+	switch {
+	case len(hgvals) == 1 && hgvals[0] == 5:
+		return FiveOfAKind
+	case len(hgvals) == 2 && hgvals[0] == 4:
+		return FourOfAKind
+	case len(hgvals) == 2 && hgvals[0] == 3 && hgvals[1] == 2:
+		return FullHouse
+	case len(hgvals) == 3 && hgvals[0] == 3:
+		return ThreeOfAKind
+	case len(hgvals) == 3 && hgvals[0] == 2 && hgvals[1] == 2:
+		return TwoPair
+	case len(hgvals) == 4 && hgvals[0] == 2:
+		return OnePair
+	default:
+		return HighCard
+	}
+}
+
+func CompareHandsPart2(h1, h2 Hand) int {
+	ty1 := ClassifyHandPart2(h1)
+	ty2 := ClassifyHandPart2(h2)
+	if ty1 < ty2 {
+		return -1
+	} else if ty1 > ty2 {
+		return 1
+	}
+	//comp values
+	for i := 0; i < 5; i++ {
+		cr1 := CharRankPart2(rune(h1[i]))
+		cr2 := CharRankPart2(rune(h2[i]))
+
+		if cr1 > cr2 {
+			return -1
+		} else if cr1 < cr2 {
+			return 1
+		}
+	}
+	return 0
+}
+
 func part2MainFunc(in string) (int, error) {
-	return 0, nil
+	lines := readutil.ReadLines(in)
+	hbs := mustParseHandBits(lines)
+
+	slices.SortFunc(hbs, func(a, b HandBid) int {
+		return CompareHandsPart2(a.Hand, b.Hand)
+	})
+
+	wsum := 0
+	for i, hb := range hbs {
+		wsum += (i + 1) * hb.Bid
+	}
+
+	return wsum, nil
 }
