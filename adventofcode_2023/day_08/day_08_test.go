@@ -24,6 +24,18 @@ BBB = (AAA, ZZZ)
 ZZZ = (ZZZ, ZZZ)
 `
 
+const inputTest3Seq = "LR"
+const inputTest3Nodes = `
+11A = (11B, XXX)
+11B = (XXX, 11Z)
+11Z = (11B, XXX)
+22A = (22B, XXX)
+22B = (22C, 22C)
+22C = (22Z, 22Z)
+22Z = (22B, 22B)
+XXX = (XXX, XXX)
+`
+
 func TestPart1MainFunc(t *testing.T) {
 	{
 		res, err := part1MainFunc(inputTest1Seq, inputTest1Nodes)
@@ -44,9 +56,9 @@ func TestPart1MainFunc(t *testing.T) {
 }
 
 func TestPart2MainFunc(t *testing.T) {
-	res, err := part2MainFunc(inputTest1Seq, inputTest1Nodes)
+	res, err := part2MainFunc(inputTest3Seq, inputTest3Nodes)
 	testutil.CheckUnexpectedError(t, err)
-	var exp int = -42
+	var exp int = 6
 	if exp != res {
 		t.Fatalf("want %d, have %d", exp, res)
 	}
