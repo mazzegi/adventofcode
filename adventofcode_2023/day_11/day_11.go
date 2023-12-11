@@ -17,14 +17,14 @@ func log(pattern string, args ...interface{}) {
 
 func Part1() {
 	t0 := time.Now()
-	res, err := part1MainFunc(input)
+	res, err := part1MainFunc(input, 1)
 	errutil.ExitOnErr(err)
 	log("part1: result = %d (%s)", res, time.Since(t0))
 }
 
 func Part2() {
 	t0 := time.Now()
-	res, err := part2MainFunc(input, 1000000)
+	res, err := part1MainFunc(input, 999999)
 	errutil.ExitOnErr(err)
 	log("part2: result = %d (%s)", res, time.Since(t0))
 }
@@ -95,39 +95,8 @@ func emptyOnes(rows []string) (emptyRows []int, emptyCols []int) {
 	return
 }
 
-func part1MainFunc(in string) (int, error) {
-	rows := expanded(readutil.ReadLines(in))
-
-	//find galaxies
-	var galaxies []grid.Point
-	for y, row := range rows {
-		for x, col := range row {
-			if col == '#' {
-				galaxies = append(galaxies, grid.Pt(x, y))
-			}
-		}
-	}
-
-	var sum int
-	for i := 0; i < len(galaxies); i++ {
-		pi := galaxies[i]
-		// iterate over all higher
-		for j := i + 1; j < len(galaxies); j++ {
-			pj := galaxies[j]
-			dist := pi.ManhattenDistTo(pj)
-			sum += dist
-		}
-	}
-	// expand rows
-
-	return sum, nil
-}
-
-func part2MainFunc(in string, expFac int) (int, error) {
+func part1MainFunc(in string, expFac int) (int, error) {
 	rows := readutil.ReadLines(in)
-	for i := 0; i < expFac; i++ {
-		rows = expanded(rows)
-	}
 
 	//find galaxies
 	var galaxies []grid.Point
@@ -138,6 +107,22 @@ func part2MainFunc(in string, expFac int) (int, error) {
 			}
 		}
 	}
+	//find empty
+	emptyRows, emptyCols := emptyOnes(rows)
+
+	// emptyRows and emptyCols are ordered!
+	numBetween := func(vals []int, n1, n2 int) int {
+		if n2 < n1 {
+			n1, n2 = n2, n1
+		}
+		var nb int
+		for _, v := range vals {
+			if v > n1 && v < n2 {
+				nb++
+			}
+		}
+		return nb * expFac
+	}
 
 	var sum int
 	for i := 0; i < len(galaxies); i++ {
@@ -146,6 +131,8 @@ func part2MainFunc(in string, expFac int) (int, error) {
 		for j := i + 1; j < len(galaxies); j++ {
 			pj := galaxies[j]
 			dist := pi.ManhattenDistTo(pj)
+			dist += numBetween(emptyRows, pi.Y, pj.Y)
+			dist += numBetween(emptyCols, pi.X, pj.X)
 			sum += dist
 		}
 	}
@@ -153,3 +140,34 @@ func part2MainFunc(in string, expFac int) (int, error) {
 
 	return sum, nil
 }
+
+// func part2MainFunc(in string, expFac int) (int, error) {
+// 	rows := readutil.ReadLines(in)
+// 	for i := 0; i < expFac; i++ {
+// 		rows = expanded(rows)
+// 	}
+
+// 	//find galaxies
+// 	var galaxies []grid.Point
+// 	for y, row := range rows {
+// 		for x, col := range row {
+// 			if col == '#' {
+// 				galaxies = append(galaxies, grid.Pt(x, y))
+// 			}
+// 		}
+// 	}
+
+// 	var sum int
+// 	for i := 0; i < len(galaxies); i++ {
+// 		pi := galaxies[i]
+// 		// iterate over all higher
+// 		for j := i + 1; j < len(galaxies); j++ {
+// 			pj := galaxies[j]
+// 			dist := pi.ManhattenDistTo(pj)
+// 			sum += dist
+// 		}
+// 	}
+// 	// expand rows
+
+// 	return sum, nil
+// }
