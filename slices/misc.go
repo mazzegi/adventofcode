@@ -61,3 +61,15 @@ func Insert[T any](ts []T, t T, atIdx int) []T {
 	its = append(its, ts[atIdx:]...)
 	return its
 }
+
+func Equal[T comparable](ts1 []T, ts2 []T) bool {
+	if len(ts1) != len(ts2) {
+		return false
+	}
+	for i, t1 := range ts1 {
+		if t1 != ts2[i] {
+			return false
+		}
+	}
+	return true
+}
