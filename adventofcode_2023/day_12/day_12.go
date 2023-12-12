@@ -22,7 +22,12 @@ func Part1() {
 	log("part1: result = %d (%s)", res, time.Since(t0))
 }
 
+const skip2 = false
+
 func Part2() {
+	if skip2 {
+		return
+	}
 	t0 := time.Now()
 	res, err := part2MainFunc(input)
 	errutil.ExitOnErr(err)
@@ -87,39 +92,83 @@ func recordMatch(rec Record) bool {
 	return eq
 }
 
+// func numMatchingArrangements(rec Record) int {
+// 	var num int
+
+// 	qCnt := strings.Count(string(rec.Pattern), "?")
+// 	sCnt := strings.Count(string(rec.Pattern), "#")
+// 	remSCnt := slices.Sum(rec.Groups) - sCnt
+
+// 	repls := RuneKnorcations(remSCnt, qCnt, '#', '.')
+// 	for _, repl := range repls {
+// 		prec := rec.Clone()
+// 		ir := 0
+// 		for i, r := range prec.Pattern {
+// 			if r == '?' {
+// 				prec.Pattern[i] = repl[ir]
+// 				ir++
+// 			}
+// 		}
+// 		match := recordMatch(prec)
+// 		if match {
+// 			num++
+// 		}
+// 	}
+// 	return num
+// }
+
 func numMatchingArrangements(rec Record) int {
 	var num int
 
 	qCnt := strings.Count(string(rec.Pattern), "?")
+	sCnt := strings.Count(string(rec.Pattern), "#")
+	remSCnt := slices.Sum(rec.Groups) - sCnt
+
 	repl := slices.Repeat('.', qCnt)
 	last := slices.Repeat('#', qCnt)
+	replSCount := 0
+
+	rotate := func() {
+		for i := 0; i < qCnt; i++ {
+			if repl[i] == '.' {
+				repl[i] = '#'
+				replSCount++
+				break
+			}
+			repl[i] = '.'
+			replSCount--
+		}
+	}
 
 	for {
-		prec := rec.Clone()
-		ir := 0
-		for i, r := range prec.Pattern {
-			if r == '?' {
-				prec.Pattern[i] = repl[ir]
-				ir++
+		if replSCount == remSCnt {
+			prec := rec.Clone()
+			ir := 0
+			for i, r := range prec.Pattern {
+				if r == '?' {
+					prec.Pattern[i] = repl[ir]
+					ir++
+				}
 			}
-		}
-		match := recordMatch(prec)
-		if match {
-			num++
+			match := recordMatch(prec)
+			if match {
+				num++
+			}
 		}
 
 		if slices.Equal(repl, last) {
 			break
 		}
 
-		// rotate repl
-		for i := 0; i < qCnt; i++ {
-			if repl[i] == '.' {
-				repl[i] = '#'
-				break
-			}
-			repl[i] = '.'
-		}
+		// // rotate repl
+		// for i := 0; i < qCnt; i++ {
+		// 	if repl[i] == '.' {
+		// 		repl[i] = '#'
+		// 		break
+		// 	}
+		// 	repl[i] = '.'
+		// }
+		rotate()
 	}
 
 	return num
@@ -138,23 +187,53 @@ func part1MainFunc(in string) (int, error) {
 
 func part2MainFunc(in string) (int, error) {
 	recs := mustParseRecords(readutil.ReadLines(in))
+
+	var sum int
 	for i, rec := range recs {
-		sl := slices.Repeat(string(rec.Pattern), 5)
+
+		nma := numMatchingArrangements(rec)
+
+		sl := slices.Repeat(string(rec.Pattern), 2)
 		npattern := []rune(strings.Join(sl, "?"))
 		var ngrps []int
-		for i := 0; i < 5; i++ {
+		for i := 0; i < 2; i++ {
 			ngrps = append(ngrps, rec.Groups...)
 		}
-		recs[i] = Record{
+		prec := Record{
 			Pattern: npattern,
 			Groups:  ngrps,
 		}
+
+		pnma := numMatchingArrangements(prec)
+
+		fac := pnma / nma
+		tot := pnma * fac * fac * fac
+		log("rec %03d: 1: %d; 2: %d => %d", i+1, nma, pnma, tot)
+		sum += tot
 	}
 
-	var sum int
-	for _, rec := range recs {
-		sum += numMatchingArrangements(rec)
-	}
-
-	return 0, nil
+	return sum, nil
 }
+
+// func part2MainFunc(in string) (int, error) {
+// 	recs := mustParseRecords(readutil.ReadLines(in))
+// 	for i, rec := range recs {
+// 		sl := slices.Repeat(string(rec.Pattern), 5)
+// 		npattern := []rune(strings.Join(sl, "?"))
+// 		var ngrps []int
+// 		for i := 0; i < 5; i++ {
+// 			ngrps = append(ngrps, rec.Groups...)
+// 		}
+// 		recs[i] = Record{
+// 			Pattern: npattern,
+// 			Groups:  ngrps,
+// 		}
+// 	}
+
+// 	var sum int
+// 	for _, rec := range recs {
+// 		sum += numMatchingArrangements(rec)
+// 	}
+
+// 	return 0, nil
+// }
