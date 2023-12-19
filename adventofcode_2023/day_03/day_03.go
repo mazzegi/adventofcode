@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"strconv"
+	"time"
 	"unicode"
 
 	"github.com/mazzegi/adventofcode/errutil"
@@ -17,15 +18,22 @@ func log(pattern string, args ...interface{}) {
 }
 
 func Part1() {
+	t0 := time.Now()
 	res, err := part1MainFunc(input)
 	errutil.ExitOnErr(err)
-	log("part1: result = %d", res)
+	log("part1: result = %d (%s)", res, time.Since(t0))
 }
 
+const skip2 = false
+
 func Part2() {
+	if skip2 {
+		return
+	}
+	t0 := time.Now()
 	res, err := part2MainFunc(input)
 	errutil.ExitOnErr(err)
-	log("part2: result = %d", res)
+	log("part2: result = %d (%s)", res, time.Since(t0))
 }
 
 type NumberItem struct {
