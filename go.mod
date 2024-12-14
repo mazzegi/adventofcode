@@ -1,6 +1,6 @@
 module github.com/mazzegi/adventofcode
 
-go 1.21
+go 1.23
 
 require (
 	github.com/mazzegi/log v0.0.0-20200601101706-01eae2241ec0
