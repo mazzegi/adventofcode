@@ -27,6 +27,10 @@ func New[T any]() *List[T] {
 	return &List[T]{}
 }
 
+func (l *List[T]) IsEmpty() bool {
+	return l.First == nil
+}
+
 func (l *List[T]) IsValid(tn *Node[T]) bool {
 	if tn == nil {
 		return false
