@@ -3,6 +3,7 @@ package day_05
 import (
 	"fmt"
 	"slices"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -166,6 +167,19 @@ outer_loop:
 	return sep, nil
 }
 
+func sortNumbersWithRules(numbers []string, rules []rule) ([]string, error) {
+	if len(numbers) < 2 {
+		return numbers, nil
+	}
+	center := numbers[0]
+	rest := slices.Clone(numbers[1:])
+	sep, err := separate(center, rest, rules)
+	if err != nil {
+		return nil, fmt.Errorf("separate: %w", err)
+	}
+	return sep.flatten(), nil
+}
+
 func part1MainFunc(in string) (int, error) {
 	rules, updates, err := parseInput(in)
 	if err != nil {
@@ -181,18 +195,9 @@ func part1MainFunc(in string) (int, error) {
 			ruleNumbers = append(ruleNumbers, rule.high)
 		}
 	}
-	//
-	center := ruleNumbers[0]
-	numbers := slices.Clone(ruleNumbers[1:])
-	sep, err := separate(center, numbers, rules)
-	if err != nil {
-		return 0, fmt.Errorf("separate: %w", err)
-	}
 
-	orderedNumbers := sep.flatten()
-	log("ordered: %v", orderedNumbers)
-	findOrdinal := func(num string) (int, bool) {
-		for i, on := range orderedNumbers {
+	findOrdinal := func(num string, sorted []string) (int, bool) {
+		for i, on := range sorted {
 			if on == num {
 				return i, true
 			}
@@ -200,44 +205,18 @@ func part1MainFunc(in string) (int, error) {
 		return 0, false
 	}
 
-	// rule [74,64] gives invalid ordinals [19,10]
-	//-> 64|55
-	// -> 74|55
-	// -> 74|12
-	// -> 74|51
-	// -> 74|57
-	// -> 74|34
-	// -> 74|48
-	// -> 74|76
-	// -> 74|28
-	// -> 74|53 warum wird 74 dann in upper einsortiert? (sep. mit center 55)
-
-	// 83|74 - 83 is in upper
-	// 39|83 => 39???
-	// wg 55|39
-
-	// check rules against ordinals
-	for _, rule := range rules {
-		olow, ok := findOrdinal(rule.low)
-		if !ok {
-			return 0, fmt.Errorf("didnt find low value %q in ordinals", rule.low)
-		}
-		ohigh, ok := findOrdinal(rule.high)
-		if !ok {
-			return 0, fmt.Errorf("didnt find high value %q in ordinals", rule.high)
-		}
-		if !(olow < ohigh) {
-			return 0, fmt.Errorf("rule [%s,%s] gives invalid ordinals [%d,%d]", rule.low, rule.high, olow, ohigh)
-		}
-	}
-
 	isInOrder := func(u update) (bool, error) {
+		sorted, err := sortNumbersWithRules(slices.Clone(u), rules)
+		if err != nil {
+			return false, fmt.Errorf("sort: %w", err)
+		}
+
 		for i := 1; i < len(u); i++ {
-			nlow, ok := findOrdinal(u[i-1])
+			nlow, ok := findOrdinal(u[i-1], sorted)
 			if !ok {
 				return false, fmt.Errorf("ordinal of %q not found", u[i-1])
 			}
-			nhigh, ok := findOrdinal(u[i])
+			nhigh, ok := findOrdinal(u[i], sorted)
 			if !ok {
 				return false, fmt.Errorf("ordinal of %q not found", u[i])
 			}
@@ -273,5 +252,92 @@ func part1MainFunc(in string) (int, error) {
 }
 
 func part2MainFunc(in string) (int, error) {
-	return 0, nil
+	rules, updates, err := parseInput(in)
+	if err != nil {
+		return 0, fmt.Errorf("parse-input: %w", err)
+	}
+	// extract all numbers
+	var ruleNumbers []string
+	for _, rule := range rules {
+		if !slices.Contains(ruleNumbers, rule.low) {
+			ruleNumbers = append(ruleNumbers, rule.low)
+		}
+		if !slices.Contains(ruleNumbers, rule.high) {
+			ruleNumbers = append(ruleNumbers, rule.high)
+		}
+	}
+
+	findOrdinal := func(num string, sorted []string) (int, bool) {
+		for i, on := range sorted {
+			if on == num {
+				return i, true
+			}
+		}
+		return 0, false
+	}
+
+	isInOrder := func(u update) (bool, []string, error) {
+		sorted, err := sortNumbersWithRules(slices.Clone(u), rules)
+		if err != nil {
+			return false, nil, fmt.Errorf("sort: %w", err)
+		}
+
+		for i := 1; i < len(u); i++ {
+			nlow, ok := findOrdinal(u[i-1], sorted)
+			if !ok {
+				return false, nil, fmt.Errorf("ordinal of %q not found", u[i-1])
+			}
+			nhigh, ok := findOrdinal(u[i], sorted)
+			if !ok {
+				return false, nil, fmt.Errorf("ordinal of %q not found", u[i])
+			}
+			if nlow > nhigh {
+				return false, sorted, nil
+			}
+		}
+		return true, sorted, nil
+	}
+
+	midNum := func(u update) int {
+		i := len(u) / 2
+		num := u[i]
+		n, _ := strconv.Atoi(num)
+		return n
+	}
+
+	var sum int
+	for _, u := range updates {
+		ino, sorted, err := isInOrder(u)
+		if err != nil {
+			return 0, fmt.Errorf("isinorder: %w", err)
+		}
+		if ino {
+			continue
+		}
+
+		// not in order - sort
+		us := slices.Clone(u)
+		sort.Slice(us, func(i, j int) bool {
+			o1, ok := findOrdinal(us[i], sorted)
+			if !ok {
+				panic("find-ordinal of " + us[i])
+			}
+			o2, ok := findOrdinal(us[j], sorted)
+			if !ok {
+				panic("find-ordinal of " + us[j])
+			}
+			return o1 < o2
+		})
+		//sort.Slice()
+		sum += midNum(us)
+
+		// if ino {
+		// 	sum += midNum(u)
+		// 	log("pass: %v", u)
+		// } else {
+		// 	log("NOT pass: %v", u)
+		// }
+	}
+
+	return sum, nil
 }
