@@ -2,6 +2,7 @@ package day_06
 
 import (
 	"fmt"
+	"slices"
 	"time"
 
 	"github.com/mazzegi/adventofcode/errutil"
@@ -28,10 +29,18 @@ func Part2() {
 	log("part2: result = %d (%s)", res, time.Since(t0))
 }
 
-type GridRow []bool
-
 type Grid struct {
 	rows [][]bool
+}
+
+func (g *Grid) clone() *Grid {
+	cg := &Grid{
+		rows: make([][]bool, len(g.rows)),
+	}
+	for i, row := range g.rows {
+		cg.rows[i] = slices.Clone(row)
+	}
+	return cg
 }
 
 func (g *Grid) contains(pos grid.Point) bool {
@@ -132,5 +141,86 @@ func part1MainFunc(in string) (int, error) {
 }
 
 func part2MainFunc(in string) (int, error) {
-	return 0, nil
+	g, gpos, err := parseGrid(in)
+	if err != nil {
+		return 0, fmt.Errorf("parse-grid: %w", err)
+	}
+
+	var loopPoss int
+	for y := 0; y < len(g.rows); y++ {
+		for x := 0; x < len(g.rows[y]); x++ {
+			pt := grid.Pt(x, y)
+			if pt == gpos {
+				continue
+			}
+			if g.isObstacleAt(pt) {
+				continue
+			}
+			// put an obstacle and see if guard loops
+			cg := g.clone()
+			cg.rows[y][x] = true
+			// probe
+			if guardLoops(cg, gpos, north) {
+				log("ok: obstacle at %s", pt)
+				loopPoss++
+			}
+		}
+	}
+
+	return loopPoss, nil
+}
+
+type posDir struct {
+	pos grid.Point
+	dir string
+}
+
+func guardLoops(g *Grid, gpos grid.Point, dir string) bool {
+	visitedPosDirs := set.New[posDir]()
+	visitedPosDirs.Insert(posDir{
+		pos: gpos,
+		dir: dir,
+	})
+
+	move := func() {
+		var nextInDir grid.Point
+		var dirBy90Deg string
+		switch dir {
+		case north:
+			nextInDir = gpos.Add(grid.Pt(0, -1))
+			dirBy90Deg = east
+		case south:
+			nextInDir = gpos.Add(grid.Pt(0, 1))
+			dirBy90Deg = west
+		case west:
+			nextInDir = gpos.Add(grid.Pt(-1, 0))
+			dirBy90Deg = north
+		case east:
+			nextInDir = gpos.Add(grid.Pt(1, 0))
+			dirBy90Deg = south
+		default:
+			panic("invalid direction " + dir)
+		}
+		if !g.isObstacleAt(nextInDir) {
+			gpos = nextInDir
+			return
+		}
+		// turn right by 90 degree
+		dir = dirBy90Deg
+	}
+
+	for {
+		move()
+		if !g.contains(gpos) {
+			return false
+		}
+		pd := posDir{
+			pos: gpos,
+			dir: dir,
+		}
+		if visitedPosDirs.Contains(pd) {
+			return true
+		}
+		visitedPosDirs.Insert(pd)
+	}
 }
