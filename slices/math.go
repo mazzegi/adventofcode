@@ -13,3 +13,13 @@ func Sum[T Number](ts []T) T {
 	}
 	return sum
 }
+
+func Min[T Number](ts []T) T {
+	var max T
+	for i, t := range ts {
+		if i == 0 || t < max {
+			max = t
+		}
+	}
+	return max
+}

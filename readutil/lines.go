@@ -34,6 +34,20 @@ func ReadString(s string) string {
 	return strings.Join(ReadLines(s), "")
 }
 
+func ReadStrings(s string, sep string) []string {
+	var sl []string
+	sls := strings.Split(s, sep)
+	for _, v := range sls {
+		v = strings.TrimSpace(v)
+		if v == "" {
+			continue
+		}
+		sl = append(sl, v)
+	}
+
+	return sl
+}
+
 func ReadInts(s string, sep string) ([]int, error) {
 	s = strings.Trim(s, " \r\n\t")
 	var ns []int
