@@ -7,6 +7,7 @@ import (
 
 const (
 	Set   rune = '#'
+	Set1  rune = '@'
 	Unset rune = '.'
 )
 
@@ -17,7 +18,7 @@ func ParseBinaryGrid(s string) (*BinaryGrid, error) {
 		row := []bool{}
 		for _, r := range l {
 			switch r {
-			case Set:
+			case Set, Set1:
 				row = append(row, true)
 			case Unset:
 				row = append(row, false)
@@ -55,6 +56,10 @@ func (g *BinaryGrid) NumCols() int {
 
 func (g *BinaryGrid) IsSet(col, row int) bool {
 	return g.rows[row][col]
+}
+
+func (g *BinaryGrid) Unset(col, row int) {
+	g.rows[row][col] = false
 }
 
 func (g *BinaryGrid) SetPoints() []Point {
