@@ -20,6 +20,18 @@ func ReadLines(s string) []string {
 	return lines
 }
 
+func ReadLinesNoTrim(s string) []string {
+	var lines []string
+	sl := strings.Split(s, "\n")
+	for _, s := range sl {
+		if s == "" {
+			continue
+		}
+		lines = append(lines, s)
+	}
+	return lines
+}
+
 func ReadLinesKeepEmpty(s string) []string {
 	var lines []string
 	sl := strings.Split(s, "\n")
