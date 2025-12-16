@@ -93,7 +93,6 @@ func part1MainFunc(in string) (int, error) {
 			tbs = append(tbs, b)
 			occPts.Insert(b.curr)
 		}
-		log("tidy: %d -> %d", len(bs), len(tbs))
 		return tbs
 	}
 
@@ -124,5 +123,47 @@ func part1MainFunc(in string) (int, error) {
 }
 
 func part2MainFunc(in string) (int, error) {
-	return 0, nil
+	g, err := grid.Parse(in)
+	if err != nil {
+		return 0, fmt.Errorf("parse_grid: %w", err)
+	}
+	startPt, ok := g.FindFirst('S')
+	if !ok {
+		return 0, fmt.Errorf("start point not found")
+	}
+
+	var totalDone int
+
+	var next func(p grid.GridPoint)
+	next = func(p grid.GridPoint) {
+		p.Row++
+		if !g.Contains(p) {
+			totalDone++
+			return
+		}
+		if g.At(p) == '^' {
+			//left
+			pLeft := p
+			pLeft.Col--
+			if !g.Contains(pLeft) {
+				totalDone++
+				return
+			}
+			next(pLeft)
+			//right
+			pRight := p
+			pRight.Col++
+			if !g.Contains(pRight) {
+				totalDone++
+				return
+			}
+			next(pRight)
+		} else {
+			next(p)
+		}
+	}
+
+	next(startPt)
+
+	return totalDone, nil
 }
