@@ -132,38 +132,46 @@ func part2MainFunc(in string) (int, error) {
 		return 0, fmt.Errorf("start point not found")
 	}
 
-	var totalDone int
+	numPathsCache := map[grid.GridPoint]int{}
+	var cacheHits int
 
-	var next func(p grid.GridPoint)
-	next = func(p grid.GridPoint) {
-		p.Row++
-		if !g.Contains(p) {
-			totalDone++
-			return
+	var next func(p grid.GridPoint) int
+	next = func(p grid.GridPoint) (numPaths int) {
+		if npCache, ok := numPathsCache[p]; ok {
+			cacheHits++
+			return npCache
 		}
-		if g.At(p) == '^' {
+
+		p.Row++
+		numPaths = 0
+		if !g.Contains(p) {
+			numPaths = 1
+		} else if g.At(p) == '^' {
 			//left
 			pLeft := p
 			pLeft.Col--
 			if !g.Contains(pLeft) {
-				totalDone++
-				return
+				numPaths++
+			} else {
+				numPaths += next(pLeft)
 			}
-			next(pLeft)
 			//right
 			pRight := p
 			pRight.Col++
 			if !g.Contains(pRight) {
-				totalDone++
-				return
+				numPaths++
+			} else {
+				numPaths += next(pRight)
 			}
-			next(pRight)
 		} else {
-			next(p)
+			numPaths = next(p)
 		}
+		numPathsCache[p] = numPaths
+		return
 	}
 
-	next(startPt)
+	numPaths := next(startPt)
+	log("cache-hits: %d", cacheHits)
 
-	return totalDone, nil
+	return numPaths, nil
 }
