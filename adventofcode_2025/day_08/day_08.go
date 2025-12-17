@@ -37,13 +37,23 @@ func parseV3D(s string) (vector.Vector3D, error) {
 	return v, nil
 }
 
+var nextID int = 1
+
+func fetchNextID() int {
+	nid := nextID
+	nextID++
+	return nid
+}
+
 type JBox struct {
 	ID          int
 	Position    vector.Vector3D
 	ConnectedTo []*JBox
+	Cluster     *Cluster
 }
 
 type Cluster struct {
+	ID     int
 	JBoxes []*JBox
 }
 
@@ -182,6 +192,113 @@ func part1MainFunc(in string, numPairs int) (int, error) {
 	return val, nil
 }
 
+//////////////////// PART2
+
 func part2MainFunc(in string) (int, error) {
-	return 0, nil
+	lines := readutil.ReadLines(in)
+	var jBoxes []*JBox
+	log("parse input ...")
+	for i, line := range lines {
+		v, err := parseV3D(line)
+		if err != nil {
+			return 0, fmt.Errorf("parse_v3d %q: %w", line, err)
+		}
+		jBoxes = append(jBoxes, &JBox{
+			ID:       i,
+			Position: v,
+		})
+	}
+
+	clusters := map[int]*Cluster{}
+
+	makeShortestConnection := func() (jb1, jb2 *JBox, err error) {
+		var (
+			minDist        float64
+			minJB1, minJB2 *JBox
+		)
+
+		for i1, jb1 := range jBoxes {
+			_ = i1
+			for i2, jb2 := range jBoxes {
+				_ = i2
+				if jb1.ID == jb2.ID {
+					continue
+				}
+				if jb1.isDirectlyConnectedTo(jb2) {
+					continue
+				}
+				dist := jb1.Position.DistTo(jb2.Position)
+				if minJB1 == nil || dist < minDist {
+					minDist = dist
+					minJB1 = jb1
+					minJB2 = jb2
+				}
+			}
+		}
+		if minJB1 == nil {
+			// no connection where made
+			return nil, nil, fmt.Errorf("no connection possible")
+		}
+		minJB1.ConnectedTo = append(minJB1.ConnectedTo, minJB2)
+		minJB2.ConnectedTo = append(minJB2.ConnectedTo, minJB1)
+		log("connected: %s <-> %s", formatV3D(minJB1.Position), formatV3D(minJB2.Position))
+
+		// handle clusters
+		switch {
+		case minJB1.Cluster == nil && minJB2.Cluster == nil: // no clusters yet
+			cl := &Cluster{
+				ID:     fetchNextID(),
+				JBoxes: []*JBox{minJB1, minJB2},
+			}
+			minJB1.Cluster = cl
+			minJB2.Cluster = cl
+			clusters[cl.ID] = cl
+
+		case minJB1.Cluster != nil && minJB2.Cluster != nil: // merge cluster 2 -> 1 and delete cluster 2 if clusters are not equal
+			if minJB1.Cluster.ID != minJB2.Cluster.ID {
+				jb2ClusterID := minJB2.Cluster.ID
+				for _, jb2sub := range minJB2.Cluster.JBoxes {
+					minJB1.Cluster.JBoxes = append(minJB1.Cluster.JBoxes, jb2sub)
+					jb2sub.Cluster = minJB1.Cluster
+				}
+				delete(clusters, jb2ClusterID)
+			} else {
+				// they are anyway in the same cluster
+			}
+
+		case minJB1.Cluster != nil && minJB2.Cluster == nil:
+			minJB1.Cluster.JBoxes = append(minJB1.Cluster.JBoxes, minJB2)
+			minJB2.Cluster = minJB1.Cluster
+
+		case minJB1.Cluster == nil && minJB2.Cluster != nil:
+			minJB2.Cluster.JBoxes = append(minJB2.Cluster.JBoxes, minJB1)
+			minJB1.Cluster = minJB2.Cluster
+		}
+
+		return minJB1, minJB2, nil
+	}
+
+	firstCluster := func() *Cluster {
+		for _, c := range clusters {
+			return c
+		}
+		return nil
+	}
+
+	log("make connections")
+	for {
+		jb1, jb2, err := makeShortestConnection()
+		if err != nil {
+			return 0, fmt.Errorf("make_shortest_connection")
+		}
+		//
+		if len(clusters) == 1 {
+			theCluster := firstCluster()
+			if len(theCluster.JBoxes) == len(jBoxes) {
+				// done
+				return int(jb1.Position.X * jb2.Position.X), nil
+			}
+		}
+
+	}
 }
