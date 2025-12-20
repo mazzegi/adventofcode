@@ -60,15 +60,6 @@ func part1MainFunc(in string) (int, error) {
 	return max, nil
 }
 
-type interval struct {
-	min int
-	max int
-}
-
-func (i interval) isZero() bool {
-	return i.min == 0 && i.max == 0
-}
-
 func part2MainFunc(in string) (int, error) {
 	var redPoints []grid.GridPoint
 	lines := readutil.ReadLines(in)
