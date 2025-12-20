@@ -11,6 +11,10 @@ type GridPoint struct {
 	Col, Row int
 }
 
+func (gp GridPoint) String() string {
+	return fmt.Sprintf("%d, %d", gp.Col, gp.Row)
+}
+
 func GP(col, row int) GridPoint {
 	return GridPoint{Col: col, Row: row}
 }
