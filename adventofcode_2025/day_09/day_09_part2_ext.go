@@ -2,6 +2,7 @@ package day_09
 
 import (
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/mazzegi/adventofcode/grid"
@@ -10,6 +11,10 @@ import (
 	"github.com/mazzegi/adventofcode/readutil"
 	"github.com/mazzegi/adventofcode/set"
 )
+
+func iv(min, max int) interval {
+	return interval{min, max}
+}
 
 type interval struct {
 	min int
@@ -24,10 +29,41 @@ func (i interval) isZero() bool {
 	return i.min == 0 && i.max == 0
 }
 
+func intsToIntervals(ns []int) []interval {
+	if len(ns) == 0 {
+		return []interval{}
+	}
+	sort.Ints(ns)
+	var ivs []interval
+	var curr interval
+
+	for i, n := range ns {
+		if i == 0 {
+			curr = iv(n, n)
+			continue
+		}
+		// can merge
+		if n <= curr.max+1 { // either max or max+1 (!!! sorted)
+			curr.max = n
+		} else {
+			ivs = append(ivs, curr)
+			curr = iv(n, n)
+		}
+	}
+	ivs = append(ivs, curr)
+	return ivs
+}
+
 func part2MainFuncV2(in string) (int, error) {
 	t0 := time.Now()
 	var redPoints []grid.GridPoint
 	edge := set.New[grid.GridPoint]()
+	edgeRows := map[int][]int{} // row -> []col
+	insertIntoEdge := func(pt grid.GridPoint) {
+		edge.Insert(pt)
+		edgeRows[pt.Row] = append(edgeRows[pt.Row], pt.Col)
+	}
+
 	lines := readutil.ReadLines(in)
 	var (
 		minX int
@@ -42,7 +78,7 @@ func part2MainFuncV2(in string) (int, error) {
 			return 0, fmt.Errorf("scan line: %w", err)
 		}
 		redPoints = append(redPoints, pt)
-		edge.Insert(pt)
+		insertIntoEdge(pt)
 		if i == 0 {
 			minX, minY = pt.Col, pt.Row
 			maxX, maxY = pt.Col, pt.Row
@@ -85,7 +121,7 @@ loop_points:
 			for row := from + 1; row < to; row++ {
 				pt := grid.GP(rp.Col, row)
 				greenPoints = append(greenPoints, pt)
-				edge.Insert(pt)
+				insertIntoEdge(pt)
 			}
 
 		case rp.Row == rpNext.Row:
@@ -97,7 +133,7 @@ loop_points:
 			for col := from + 1; col < to; col++ {
 				pt := grid.GP(col, rp.Row)
 				greenPoints = append(greenPoints, pt)
-				edge.Insert(pt)
+				insertIntoEdge(pt)
 			}
 
 		default:
@@ -107,70 +143,52 @@ loop_points:
 	}
 	log("determine green points (%d) in %s", len(greenPoints), time.Since(t0).Round(time.Microsecond))
 
-	//FLOOD FILL
-	// look for entry point - coming from left the edge must be hitted and immediately follwed by an empty tile
+	//
 	t0 = time.Now()
-	var start grid.GridPoint
-loop_y:
-	for y := minY; y <= maxY; y++ {
-		for x := minX - 1; x <= maxX; x++ {
-			if edge.Contains(grid.GP(x, y)) {
-				if !edge.Contains(grid.GP(x+1, y)) {
-					start = grid.GP(x+1, y)
-					break loop_y
-				}
-				continue loop_y
+	edgeRowIntervals := map[int][]interval{}
+	for row, cols := range edgeRows {
+		ivs := intsToIntervals(cols)
+		edgeRowIntervals[row] = ivs
+	}
+	log("built edge-row-intervals in %s", time.Since(t0).Round(time.Microsecond))
+
+	firstOnEdge := func(row, fromColIncl int) (int, bool) {
+		rowIvs, ok := edgeRowIntervals[row]
+		if !ok {
+			return 0, false
+		}
+		//
+		for _, riv := range rowIvs {
+			if fromColIncl > riv.max {
+				continue
 			}
-		}
-	}
-	if start.Col == 0 && start.Row == 0 {
-		return 0, fmt.Errorf("didnt find start-point for flood-fill")
-	}
-	log("found start point (%s) in %s", start.String(), time.Since(t0).Round(time.Microsecond))
-
-	//insidePoints := set.New[grid.GridPoint]()
-	rowIvs := rowIntervals{}
-
-	floodFillNext := func(pt grid.GridPoint, next *set.Set[grid.GridPoint]) {
-		for y := pt.Row - 1; y <= pt.Row+1; y++ {
-			for x := pt.Col - 1; x <= pt.Col+1; x++ {
-				testPt := grid.GP(x, y)
-				if testPt == pt {
-					continue
-				}
-				if edge.Contains(testPt) {
-					continue
-				}
-				if rowIvs.contains(testPt) {
-					continue
-				}
-				next.Insert(testPt)
+			//col is <= riv-max
+			if fromColIncl < riv.min {
+				return riv.min, true
 			}
+			// its >= riv.min, so from col is already on edge
+			return fromColIncl, true
 		}
+		return 0, false
 	}
 
-	t0 = time.Now()
-	currPts := []grid.GridPoint{start}
-	iter := 0
-	for {
-		for _, pt := range currPts {
-			//insidePoints.Insert(pt)
-			rowIvs.insert(pt)
+	scanRow := func(row int) []interval {
+		var ivs []interval
+		fromCol := minX - 1
+		for {
+			col, ok := firstOnEdge(row, fromCol)
+			if !ok {
+				// no more on edge
+				break
+			}
+			_ = col
 		}
-		nextPts := set.New[grid.GridPoint]()
-		for _, pt := range currPts {
-			floodFillNext(pt, nextPts)
-		}
-		if nextPts.Count() == 0 {
-			break
-		}
-		if iter%500 == 0 {
-			numIntervals, numPoints := rowIvs.counts()
-			log("iter: %d: after %s: num-intervals %d: num-points %d: next %d", iter, time.Since(t0).Round(time.Millisecond), numIntervals, numPoints, nextPts.Count())
-		}
-		iter++
-		currPts = nextPts.Values()
+		return ivs
 	}
+
+	_ = scanRow
+	insideRowIntervals := map[int][]interval{}
+	_ = insideRowIntervals
 
 	return 0, nil
 }
