@@ -1,5 +1,7 @@
 package set
 
+import "maps"
+
 func New[T comparable](vs ...T) *Set[T] {
 	s := &Set[T]{
 		values: make(map[T]struct{}),
@@ -34,11 +36,7 @@ func (s *Set[T]) Count() int {
 }
 
 func (s *Set[T]) Clone() *Set[T] {
-	cs := New[T]()
-	for t := range s.values {
-		cs.Insert(t)
-	}
-	return cs
+	return &Set[T]{values: maps.Clone(s.values)}
 }
 
 func (s *Set[T]) Values() []T {
