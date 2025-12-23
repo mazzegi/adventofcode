@@ -44,10 +44,14 @@ func buttonsEqual(b1, b2 button) bool {
 
 type joltages []int
 
+func joltagesEqual(j1, j2 joltages) bool {
+	return slices.Equal(j1, j2)
+}
+
 type machine struct {
 	targetIndicators indicators
 	buttons          []button
-	joltages         joltages
+	targetJoltages   joltages
 }
 
 func parseMachine(s string) (machine, error) {
@@ -85,7 +89,7 @@ func parseMachine(s string) (machine, error) {
 	// buttons
 	m := machine{
 		targetIndicators: is,
-		joltages:         js,
+		targetJoltages:   js,
 	}
 	for _, bstr := range buttonStrs {
 		bstr = strings.TrimPrefix(bstr, "(")
@@ -299,8 +303,4 @@ func part1MainFunc(in string) (int, error) {
 	}
 
 	return sum, nil
-}
-
-func part2MainFunc(in string) (int, error) {
-	return 0, nil
 }
