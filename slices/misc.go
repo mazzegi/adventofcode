@@ -1,6 +1,7 @@
 package slices
 
 import (
+	goslices "slices"
 	"sort"
 
 	"golang.org/x/exp/constraints"
@@ -20,7 +21,7 @@ func Repeat[T any](t T, count int) []T {
 	return sl
 }
 
-func DeleteIdx[T comparable](ts []T, i int) []T {
+func DeleteIdx[T any](ts []T, i int) []T {
 	var dts []T
 	for ix, t := range ts {
 		if ix == i {
@@ -38,6 +39,10 @@ func DeleteFirst[T comparable](ts []T, t T) []T {
 		}
 	}
 	return Clone(ts)
+}
+
+func DeleteFunc[T any](ts []T, del func(t T) bool) []T {
+	return goslices.DeleteFunc(ts, del)
 }
 
 func Reverse[T any](ts []T) []T {

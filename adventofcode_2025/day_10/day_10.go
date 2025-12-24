@@ -38,10 +38,6 @@ func indicatorsEqual(i1, i2 indicators) bool {
 
 type button []int
 
-func buttonsEqual(b1, b2 button) bool {
-	return slices.Equal(b1, b2)
-}
-
 type joltages []int
 
 func joltagesEqual(j1, j2 joltages) bool {
