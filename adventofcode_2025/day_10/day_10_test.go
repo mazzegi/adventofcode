@@ -42,3 +42,12 @@ func TestPart2MainFunc(t *testing.T) {
 		t.Fatalf("want %d, have %d", exp, res)
 	}
 }
+
+func TestPart2MainFuncInput2(t *testing.T) {
+	res, err := part2MainFunc(inputTest2)
+	testutil.CheckUnexpectedError(t, err)
+	var exp int = 33
+	if exp != res {
+		t.Fatalf("want %d, have %d", exp, res)
+	}
+}

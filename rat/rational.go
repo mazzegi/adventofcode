@@ -25,6 +25,13 @@ func IsInf(n Number) bool {
 	return n.Den == 0
 }
 
+func ToInteger(n Number) (int, bool) {
+	if n.Den != 1 {
+		return 0, false
+	}
+	return n.Num, true
+}
+
 func Format(n Number) string {
 	n = Simplify(n)
 	if n.Den != 1 {

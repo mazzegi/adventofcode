@@ -2,55 +2,25 @@ package day_10
 
 import (
 	"fmt"
-	"sort"
-	"strings"
 
+	"github.com/mazzegi/adventofcode/equations"
+	"github.com/mazzegi/adventofcode/rat"
 	"github.com/mazzegi/adventofcode/readutil"
-	"github.com/mazzegi/adventofcode/set"
 	"github.com/mazzegi/adventofcode/slices"
 )
-
-// max joltage: 278
-
-func hashJoltages(js joltages) string {
-	sl := make([]string, len(js))
-	for i, j := range js {
-		sl[i] = fmt.Sprintf("%d", j)
-	}
-	return strings.Join(sl, ",")
-}
-
-func hashJoltagesAndButtonIdx(js joltages, btnIdx int) string {
-	sl := make([]string, len(js))
-	for i, j := range js {
-		sl[i] = fmt.Sprintf("%d", j)
-	}
-	return fmt.Sprintf("%s:%d", strings.Join(sl, ","), btnIdx)
-}
 
 func part2MainFunc(in string) (int, error) {
 	lines := readutil.ReadLines(in)
 	var ms []machine
-	var ajs []int
 	for _, line := range lines {
 		m, err := parseMachine(line)
 		if err != nil {
 			return 0, fmt.Errorf("parse machine %q: %w", line, err)
 		}
 		ms = append(ms, m)
-		ajs = append(ajs, m.targetJoltages...)
 	}
-	maxJ := slices.Max(ajs)
-	fmt.Println("max joltage: ", maxJ)
-
 	var sum int
 	for i, m := range ms {
-		// sort buttons with more effect to front
-		sort.Slice(m.buttons, func(i, j int) bool {
-			bs1 := m.buttons[i]
-			bs2 := m.buttons[j]
-			return len(bs1) > len(bs2)
-		})
 
 		np, err := findFewestButtonPressesForMachineJoltage(m)
 		if err != nil {
@@ -63,107 +33,65 @@ func part2MainFunc(in string) (int, error) {
 	return sum, nil
 }
 
-func applyButtonJoltages(jsIn joltages, btn button) joltages {
-	jsOut := slices.Clone(jsIn)
-	for _, ti := range btn {
-		jsOut[ti]++
-	}
-	return jsOut
-}
-
 func findFewestButtonPressesForMachineJoltage(m machine) (int, error) {
-	var min int
-	foundOne := false
-	dontTryThis := set.New[string]()
-	thisWasOk := map[string]int{} // hash -> num_presses
-	for _, btn := range m.buttons {
-		startJs := make(joltages, len(m.targetJoltages))
-		numPresses, ok := findFewestButtonPressesJoltage(m, startJs, btn, 0, min, dontTryThis, thisWasOk)
-		if !ok {
-			continue
-		}
+	dim := len(m.buttons)
+	sys, err := equations.NewSystem(dim)
+	if err != nil {
+		return 0, fmt.Errorf("new_system: %w", err)
+	}
+	maxJoltage := slices.Max(m.targetJoltages)
+	// add eqs
+	bounds := slices.Repeat(maxJoltage, dim)
 
-		if !foundOne {
-			min = numPresses
-			foundOne = true
-		} else if numPresses < min {
-			min = numPresses
+	for i, targetJoltage := range m.targetJoltages {
+		cs := make([]int, dim)
+		for btnIdx, btn := range m.buttons {
+			// does button contribute to joltage?
+			if slices.Contains(btn, i) {
+				cs[btnIdx] = 1
+				if targetJoltage < bounds[btnIdx] {
+					bounds[btnIdx] = targetJoltage
+				}
+			} else {
+				cs[btnIdx] = 0
+			}
+		}
+		//
+		sys.AddEquation(mkEq(-targetJoltage, cs...))
+	}
+	//
+	sols, err := sys.AllPositiveIntegerSolutions(bounds)
+
+	var minSum int
+	for i, sol := range sols {
+		fmt.Printf("solution %d: %v\n", i+1, sol)
+		sum := slices.Sum(sol)
+		if i == 0 || sum < minSum {
+			minSum = sum
 		}
 	}
-	if !foundOne {
-		return 0, fmt.Errorf("found no pressing sequence")
-	}
-	return min, nil
+	return minSum, nil
 }
 
-func findFewestButtonPressesJoltage(m machine, startJs joltages, startBtn button, currPresses int, currMin int, dontTryThis *set.Set[string], thisWasOk map[string]int) (int, bool) {
-	if currMin > 0 && currPresses+1 >= currMin {
-		// we dont get better
-		return 0, false
-	}
-	currJs := applyButtonJoltages(startJs, startBtn)
-	if joltagesEqual(currJs, m.targetJoltages) {
-		return 1, true
-	}
-	currJsHash := hashJoltages(currJs)
-	// is any of joltages higher than target? if yes break.
-	for i, cj := range currJs {
-		if cj > m.targetJoltages[i] {
-			return 0, false
-		}
-	}
-	if dontTryThis.Contains(currJsHash) {
-		return 0, false
-	}
-	if np, ok := thisWasOk[currJsHash]; ok {
-		return np, true
-	}
+func mkRat(v int) rat.Number {
+	return rat.R(v, 1)
+}
 
-	currPresses++
-
-	var minfromHere int
-	newMin := currMin
-	foundOne := false
-	for i, btn := range m.buttons {
-		currJsAndBtnHash := hashJoltagesAndButtonIdx(currJs, i)
-		// if dontTryThis.Contains(currJsAndBtnHash) {
-		// 	continue
-		// }
-		_ = i
-		var presses int
-		var ok bool
-		presses, ok = findFewestButtonPressesJoltage(m, currJs, btn, currPresses, newMin, dontTryThis, thisWasOk)
-
-		// var presses int
-		// var ok bool
-		// if np, cacheok := thisWasOk[currJsAndBtnHash]; cacheok {
-		// 	presses = np
-		// 	ok = true
-		// } else {
-		// 	presses, ok = findFewestButtonPressesJoltage(m, currJs, btn, currPresses, newMin, dontTryThis, thisWasOk)
-		// }
-		if !ok {
-			//dontTryThis.Insert(currJsAndBtnHash)
-			continue
-		}
-		thisWasOk[currJsAndBtnHash] = presses
-		if !foundOne {
-			minfromHere = presses
-			if newMin == 0 {
-				newMin = currPresses + presses
-			}
-			foundOne = true
-		} else if presses < minfromHere {
-			minfromHere = presses
-			if newMin == 0 {
-				newMin = currPresses + presses
-			}
-		}
+func mkCoeffs(vs ...int) []rat.Number {
+	rns := make([]rat.Number, len(vs))
+	for i, v := range vs {
+		rns[i] = mkRat(v)
 	}
-	if !foundOne {
-		dontTryThis.Insert(currJsHash)
-		return 0, false
+	return rns
+}
+
+func mkExpr(constant int, vs ...int) equations.Expression {
+	return equations.Expression{
+		VariableCoeffs: mkCoeffs(vs...),
+		Constant:       mkRat(constant),
 	}
-	thisWasOk[currJsHash] = minfromHere + 1
-	return minfromHere + 1, foundOne // +1 for the first press
+}
+
+func mkEq(constant int, vs ...int) equations.Equation {
+	return equations.Equation{mkExpr(constant, vs...)}
 }
